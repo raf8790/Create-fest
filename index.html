@@ -1,1287 +1,174 @@
-```html
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="ml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FestMaster Pro - Complete Festival Management System</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for Icons -->
+    <title>Fest Management System</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-    <style>
-        @media print {
-            .no-print { display: none !important; }
-            .print-only { display: block !important; }
-            body { background: white !important; color: black !important; }
-        }
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
-        }
-    </style>
 </head>
-<body class="h-full bg-slate-900 text-slate-100 font-sans antialiased overflow-hidden flex flex-col">
+<body class="bg-gray-50 font-sans">
 
-    <div id="app" class="flex h-full w-full overflow-hidden">
-        
-        <!-- SIDEBAR NAVIGATION (Admin & General) -->
-        <aside id="sidebar" class="w-72 bg-slate-800 border-r border-slate-700 flex flex-col z-20 transition-all duration-300 no-print flex-shrink-0">
-            <div class="p-5 border-b border-slate-700 flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/30">
-                        <i class="fa-solid fa-crown text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <h1 id="sidebar-fest-name" class="font-bold text-base leading-tight tracking-wide text-white">FestMaster Pro</h1>
-                        <span class="text-xs text-indigo-400 font-medium">Management Suite</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Navigation Links -->
-            <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1.5 text-sm font-medium">
-                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 px-3 pb-2 pt-1">Admin Controls</div>
-                
-                <button onclick="switchTab('dashboard')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all text-slate-300 hover:bg-slate-700 hover:text-white" data-tab="dashboard">
-                    <i class="fa-solid fa-chart-pie w-5 text-center text-indigo-400"></i>
-                    <span>Dashboard</span>
-                </button>
-                
-                <button onclick="switchTab('setup')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all text-slate-300 hover:bg-slate-700 hover:text-white" data-tab="setup">
-                    <i class="fa-solid fa-gears w-5 text-center text-emerald-400"></i>
-                    <span>Fest Setup & Teams</span>
-                </button>
-
-                <button onclick="switchTab('codeletters')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all text-slate-300 hover:bg-slate-700 hover:text-white" data-tab="codeletters">
-                    <i class="fa-solid fa-barcode w-5 text-center text-amber-400"></i>
-                    <span>Code Letters & Chest Nos</span>
-                </button>
-
-                <button onclick="switchTab('events')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all text-slate-300 hover:bg-slate-700 hover:text-white" data-tab="events">
-                    <i class="fa-solid fa-calendar-days w-5 text-center text-blue-400"></i>
-                    <span>Events Management</span>
-                </button>
-
-                <button onclick="switchTab('registrations')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all text-slate-300 hover:bg-slate-700 hover:text-white" data-tab="registrations">
-                    <i class="fa-solid fa-user-plus w-5 text-center text-purple-400"></i>
-                    <span>Participant Registration</span>
-                </button>
-
-                <button onclick="switchTab('scoring')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all text-slate-300 hover:bg-slate-700 hover:text-white" data-tab="scoring">
-                    <i class="fa-solid fa-award w-5 text-center text-rose-400"></i>
-                    <span>Points & Result Entry</span>
-                </button>
-
-                <button onclick="switchTab('poster')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all text-slate-300 hover:bg-slate-700 hover:text-white" data-tab="poster">
-                    <i class="fa-solid fa-image w-5 text-center text-cyan-400"></i>
-                    <span>Result Poster Maker</span>
-                </button>
-
-                <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 px-3 pt-4 pb-2">Portals & Views</div>
-
-                <button onclick="switchTab('public-portal')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all text-slate-300 hover:bg-slate-700 hover:text-white" data-tab="public-portal">
-                    <i class="fa-solid fa-globe w-5 text-center text-teal-400"></i>
-                    <span>Public Live Portal</span>
-                </button>
-
-                <button onclick="switchTab('team-portal')" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all text-slate-300 hover:bg-slate-700 hover:text-white" data-tab="team-portal">
-                    <i class="fa-solid fa-shield-halved w-5 text-center text-orange-400"></i>
-                    <span>Team Portal View</span>
-                </button>
-            </nav>
-
-            <!-- Storage & Backup status footer -->
-            <div class="p-4 border-t border-slate-700 bg-slate-900/50 flex flex-col space-y-2">
-                <div class="flex items-center justify-between text-xs text-slate-400">
-                    <span class="flex items-center space-x-1.5"><i class="fa-solid fa-database text-emerald-400"></i><span>Local Storage</span></span>
-                    <span id="storage-status" class="text-emerald-400 font-semibold">Active & Saved</span>
-                </div>
-                <div class="flex space-x-2">
-                    <button onclick="exportData()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs py-1.5 px-2 rounded border border-slate-700 transition"><i class="fa-solid fa-download mr-1"></i> Export</button>
-                    <label class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs py-1.5 px-2 rounded border border-slate-700 transition text-center cursor-pointer">
-                        <i class="fa-solid fa-upload mr-1"></i> Import <input type="file" id="import-file" class="hidden" onchange="importData(event)">
-                    </label>
-                </div>
-            </div>
-        </aside>
-
-        <!-- MAIN CONTENT AREA -->
-        <main class="flex-1 flex flex-col h-full overflow-hidden bg-slate-950">
-            <!-- Top Navbar for mobile & quick info -->
-            <header class="h-16 bg-slate-900 border-b border-slate-800 px-6 flex items-center justify-between z-10 no-print">
-                <div class="flex items-center space-x-4">
-                    <button onclick="toggleSidebar()" class="md:hidden text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-bars"></i></button>
-                    <h2 id="current-page-title" class="text-lg font-bold text-white tracking-wide">Dashboard</h2>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <div id="top-fest-badge" class="hidden sm:flex items-center space-x-2 bg-indigo-500/10 border border-indigo-500/30 px-3 py-1.5 rounded-full text-xs font-medium text-indigo-300">
-                        <i class="fa-solid fa-bullhorn text-indigo-400"></i>
-                        <span id="header-fest-title">College Arts Fest 2026</span>
-                    </div>
-                    <button onclick="resetAllDataConfirmation()" class="text-slate-400 hover:text-rose-400 text-xs bg-slate-800 hover:bg-slate-800/80 border border-slate-700 px-3 py-1.5 rounded-lg transition">
-                        <i class="fa-solid fa-trash-can mr-1"></i> Reset Data
-                    </button>
-                </div>
-            </header>
-
-            <!-- Content Scroll Area -->
-            <div id="content-area" class="flex-1 overflow-y-auto p-4 md:p-8">
-                <!-- Dynamic tabs injected via JS -->
-            </div>
-        </main>
-    </div>
-
-    <!-- CUSTOM NOTIFICATION MODAL -->
-    <div id="custom-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl">
-            <div class="flex items-center space-x-3 mb-4">
-                <div id="modal-icon" class="w-10 h-10 rounded-xl flex items-center justify-center text-lg bg-indigo-500/20 text-indigo-400">
-                    <i class="fa-solid fa-info"></i>
-                </div>
-                <h3 id="modal-title" class="text-lg font-bold text-white">Notification</h3>
-            </div>
-            <p id="modal-message" class="text-sm text-slate-300 mb-6 leading-relaxed">Message goes here...</p>
-            <div id="modal-actions" class="flex justify-end space-x-3">
-                <button onclick="closeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold rounded-xl transition">Close</button>
-            </div>
+    <!-- Navbar -->
+    <nav class="bg-indigo-600 text-white p-4 shadow-md flex justify-between items-center">
+        <h1 class="text-xl font-bold"><i class="fa-solid fa-trophy mr-2"></i> Fest Manager Pro</h1>
+        <div class="space-x-4">
+            <button onclick="switchTab('register')" class="hover:underline">Registration</button>
+            <button onclick="switchTab('teams')" class="hover:underline">Teams & Code</button>
+            <button onclick="switchTab('judging')" class="hover:underline">Judge Scoring</button>
+            <button onclick="switchTab('public')" class="hover:underline font-semibold bg-indigo-700 px-3 py-1 rounded">Public Portal</button>
         </div>
+    </nav>
+
+    <div class="container mx-auto p-6">
+        
+        <!-- 1. REGISTRATION & CHEST NUMBER SECTION -->
+        <section id="register-section" class="tab-content bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-2xl font-bold mb-4 text-indigo-600">Participant Registration & Chest Number</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <input type="text" id="p-name" placeholder="Participant Name" class="border p-2 rounded w-full">
+                <select id="p-team" class="border p-2 rounded w-full">
+                    <option value="Team Alpha">Team Alpha</option>
+                    <option value="Team Beta">Team Beta</option>
+                    <option value="Team Gamma">Team Gamma</option>
+                </select>
+                <input type="text" id="p-chest" placeholder="Chest No (e.g., A-101)" class="border p-2 rounded w-full">
+            </div>
+            <button onclick="registerParticipant()" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Save Participant</button>
+            
+            <div class="mt-6">
+                <h3 class="font-bold text-lg mb-2">Registered List</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full border-collapse border border-gray-200 text-left">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="border p-2">Chest No</th>
+                                <th class="border p-2">Name</th>
+                                <th class="border p-2">Team</th>
+                            </tr>
+                        </thead>
+                        <tbody id="participant-table-body">
+                            <!-- Dynamic Data -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. JUDGE SCORING SECTION -->
+        <section id="judging-section" class="tab-content bg-white p-6 rounded-lg shadow-md mb-6 hidden">
+            <h2 class="text-2xl font-bold mb-4 text-indigo-600">Judge Point Entry</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <select id="score-chest" class="border p-2 rounded w-full">
+                    <!-- Populated dynamically -->
+                </select>
+                <input type="text" id="score-item" placeholder="Event Name (e.g., Oppana)" class="border p-2 rounded w-full">
+                <input type="number" id="score-points" placeholder="Points / Mark" class="border p-2 rounded w-full">
+            </div>
+            <button onclick="addScore()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Submit Points</button>
+        </section>
+
+        <!-- 3. PUBLIC & TEAM PORTAL SECTION -->
+        <section id="public-section" class="tab-content bg-white p-6 rounded-lg shadow-md mb-6 hidden">
+            <h2 class="text-2xl font-bold mb-4 text-indigo-600">Live Results & Public Portal</h2>
+            <div id="live-results" class="space-y-2">
+                <!-- Live results will appear here -->
+            </div>
+        </section>
+
     </div>
 
-    <!-- MAIN JAVASCRIPT APP LOGIC -->
     <script>
-        
-        // Default App State
-        let defaultState = {
-            festName: "Symphony Arts Fest 2026",
-            festSubtitle: "Inter-College Cultural Extravaganza",
-            venue: "Main Auditorium",
-            date: "2026-04-15",
-            teams: [
-                { id: "team-1", name: "Phoenix Blazers", code: "PHX", color: "#f97316", points: 0 },
-                { id: "team-2", name: "Royal Titans", code: "ROY", color: "#3b82f6", points: 0 },
-                { id: "team-3", name: "Emerald Strikers", code: "EMR", color: "#10b981", points: 0 },
-                { id: "team-4", name: "Mystic Royals", code: "MYS", color: "#a855f7", points: 0 }
-            ],
-            codeLetters: [
-                { id: "cl-1", code: "DAN", name: "Dance Category", prefix: "D" },
-                { id: "cl-2", code: "MUS", name: "Music Category", prefix: "M" },
-                { id: "cl-3", code: "LIT", name: "Literary Category", prefix: "L" },
-                { id: "cl-4", code: "THR", name: "Theatre & Drama", prefix: "T" },
-                { id: "cl-5", code: "ART", name: "Fine Arts", prefix: "A" }
-            ],
-            chestNumberConfig: {
-                prefixFormat: "{CODE}-{NUM}",
-                startNumber: 101,
-                autoAssign: true
-            },
-            events: [
-                { id: "ev-1", name: "Western Dance (Group)", category: "DAN", type: "Group", points1st: 10, points2nd: 7, points3rd: 5 },
-                { id: "ev-2", name: "Light Music (Solo)", category: "MUS", type: "Solo", points1st: 5, points2nd: 3, points3rd: 1 },
-                { id: "ev-3", name: "Debate English", category: "LIT", type: "Solo", points1st: 5, points2nd: 3, points3rd: 1 },
-                { id: "ev-4", name: "Mono Act", category: "THR", type: "Solo", points1st: 5, points2nd: 3, points3rd: 1 },
-                { id: "ev-5", name: "Oil Painting", category: "ART", type: "Solo", points1st: 5, points2nd: 3, points3rd: 1 }
-            ],
-            participants: [
-                { id: "p-1", name: "Aleena Roy", chestNo: "DAN-101", teamId: "team-1", category: "DAN", eventId: "ev-1" },
-                { id: "p-2", name: "Rahul Dev", chestNo: "MUS-102", teamId: "team-2", category: "MUS", eventId: "ev-2" },
-                { id: "p-3", name: "Ananya S", chestNo: "LIT-103", teamId: "team-3", category: "LIT", eventId: "ev-3" }
-            ],
-            results: [
-                // eventId, 1st (participantId or teamId/name), 2nd, 3rd
-                { eventId: "ev-2", first: "p-2", second: "p-1", third: "p-3" }
-            ],
-            activeTab: "dashboard",
-            selectedTeamPortalId: "team-1"
-        };
-
-        let state = JSON.parse(localStorage.getItem('festmaster_state')) || defaultState;
-
-        function saveState() {
-            // Recalculate team points before saving
-            recalculatePoints();
-            localStorage.setItem('festmaster_state', JSON.stringify(state));
-            updateHeaderInfo();
-        }
-
-        function recalculatePoints() {
-            // Reset team points
-            state.teams.forEach(t => t.points = 0);
-
-            // Compute points from results
-            state.results.forEach(res => {
-                const event = state.events.find(e => e.id === res.eventId);
-                if (!event) return;
-
-                if (res.first) {
-                    const p = state.participants.find(part => part.id === res.first);
-                    if (p) {
-                        const team = state.teams.find(t => t.id === p.teamId);
-                        if (team) team.points += (event.points1st || 5);
-                    }
-                }
-                if (res.second) {
-                    const p = state.participants.find(part => part.id === res.second);
-                    if (p) {
-                        const team = state.teams.find(t => t.id === p.teamId);
-                        if (team) team.points += (event.points2nd || 3);
-                    }
-                }
-                if (res.third) {
-                    const p = state.participants.find(part => part.id === res.third);
-                    if (p) {
-                        const team = state.teams.find(t => t.id === p.teamId);
-                        if (team) team.points += (event.points3rd || 1);
-                    }
-                }
-            });
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            recalculatePoints();
-            updateHeaderInfo();
-            switchTab(state.activeTab || 'dashboard');
-        });
-
-        function updateHeaderInfo() {
-            document.getElementById('sidebar-fest-name').innerText = state.festName;
-            document.getElementById('header-fest-title').innerText = state.festName;
-        }
+        // LocalStorage fallback so data doesn't wipe on back/refresh
+        let participants = JSON.parse(localStorage.getItem('fest_participants')) || [];
+        let scores = JSON.parse(localStorage.getItem('fest_scores')) || [];
 
         function switchTab(tabId) {
-            state.activeTab = tabId;
-            saveState();
-
-            // Update active state on nav buttons
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                if (btn.getAttribute('data-tab') === tabId) {
-                    btn.classList.add('bg-indigo-600', 'text-white', 'shadow-lg', 'shadow-indigo-600/20');
-                    btn.classList.remove('text-slate-300', 'hover:bg-slate-700', 'hover:text-white');
-                } else {
-                    btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-lg', 'shadow-indigo-600/20');
-                    btn.classList.add('text-slate-300', 'hover:bg-slate-700', 'hover:text-white');
-                }
-            });
-
-            const titles = {
-                'dashboard': 'Dashboard & Overview',
-                'setup': 'Festival Setup & Team Management',
-                'codeletters': 'Code Letters & Chest Number Configuration',
-                'events': 'Events Management',
-                'registrations': 'Participant Registrations',
-                'scoring': 'Points & Result Entry',
-                'poster': 'Result Poster Generator',
-                'public-portal': 'Public Live Scoreboard Portal',
-                'team-portal': 'Team Portal Dashboard'
-            };
-
-            document.getElementById('current-page-title').innerText = titles[tabId] || 'FestMaster';
-            renderTabContent(tabId);
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            if(tabId === 'register') document.getElementById('register-section').classList.remove('hidden');
+            if(tabId === 'judging') document.getElementById('judging-section').classList.remove('hidden');
+            if(tabId === 'public') {
+                document.getElementById('public-section').classList.remove('hidden');
+                renderPublicResults();
+            }
+            updateDropdowns();
         }
 
-        function renderTabContent(tabId) {
-            const container = document.getElementById('content-area');
+        function registerParticipant() {
+            const name = document.getElementById('p-name').value;
+            const team = document.getElementById('p-team').value;
+            const chest = document.getElementById('p-chest').value;
+
+            if(!name || !chest) {
+                alert('कृपया എല്ലാ വിവരങ്ങളും നൽകുക!');
+                return;
+            }
+
+            participants.push({ name, team, chest });
+            localStorage.setItem('fest_participants', JSON.stringify(participants));
+            
+            document.getElementById('p-name').value = '';
+            document.getElementById('p-chest').value = '';
+            renderParticipants();
+            alert('വിജയകരമായി രജിസ്റ്റർ ചെയ്തു!');
+        }
+
+        function renderParticipants() {
+            const tbody = document.getElementById('participant-table-body');
+            tbody.innerHTML = '';
+            participants.forEach(p => {
+                tbody.innerHTML += `<tr><td class="border p-2">${p.chest}</td><td class="border p-2">${p.name}</td><td class="border p-2">${p.team}</td></tr>`;
+            });
+        }
+
+        function updateDropdowns() {
+            const select = document.getElementById('score-chest');
+            select.innerHTML = '';
+            participants.forEach(p => {
+                select.innerHTML += `<option value="${p.chest}">${p.chest} - ${p.name}</option>`;
+            });
+        }
+
+        function addScore() {
+            const chest = document.getElementById('score-chest').value;
+            const item = document.getElementById('score-item').value;
+            const points = document.getElementById('score-points').value;
+
+            if(!item || !points) {
+                alert('ഇവന്റും പോയിന്റും നൽകുക!');
+                return;
+            }
+
+            const participant = participants.find(p => p.chest === chest);
+            scores.push({ chest, name: participant ? participant.name : 'Unknown', item, points });
+            localStorage.setItem('fest_scores', JSON.stringify(scores));
+            
+            document.getElementById('score-item').value = '';
+            document.getElementById('score-points').value = '';
+            alert('പോയിന്റ് വിജയകരമായി ചേർത്തു!');
+        }
+
+        function renderPublicResults() {
+            const container = document.getElementById('live-results');
             container.innerHTML = '';
-
-            switch(tabId) {
-                case 'dashboard':
-                    container.innerHTML = renderDashboardHTML();
-                    break;
-                case 'setup':
-                    container.innerHTML = renderSetupHTML();
-                    break;
-                case 'codeletters':
-                    container.innerHTML = renderCodeLettersHTML();
-                    break;
-                case 'events':
-                    container.innerHTML = renderEventsHTML();
-                    break;
-                case 'registrations':
-                    container.innerHTML = renderRegistrationsHTML();
-                    break;
-                case 'scoring':
-                    container.innerHTML = renderScoringHTML();
-                    break;
-                case 'poster':
-                    container.innerHTML = renderPosterHTML();
-                    break;
-                case 'public-portal':
-                    container.innerHTML = renderPublicPortalHTML();
-                    break;
-                case 'team-portal':
-                    container.innerHTML = renderTeamPortalHTML();
-                    break;
-                default:
-                    container.innerHTML = '<div class="text-slate-400">Tab not found</div>';
-            }
-        }
-
-        // --- 1. DASHBOARD ---
-        function renderDashboardHTML() {
-            recalculatePoints();
-            const sortedTeams = [...state.teams].sort((a,b) => b.points - a.points);
-            const leader = sortedTeams[0] || { name: 'N/A', points: 0 };
-
-            return `
-            <div class="space-y-6 max-w-7xl mx-auto">
-                <!-- Top banner -->
-                <div class="bg-gradient-to-r from-indigo-900/60 via-purple-900/40 to-slate-900 border border-indigo-500/30 rounded-3xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-start md:items-center shadow-xl relative overflow-hidden">
-                    <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                    <div class="space-y-2 z-10">
-                        <span class="bg-indigo-500/20 text-indigo-300 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider border border-indigo-500/30">Live Festival Suite</span>
-                        <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">${state.festName}</h2>
-                        <p class="text-slate-300 text-sm max-w-xl">${state.festSubtitle} • Venue: <span class="text-indigo-300 font-medium">${state.venue}</span> • Date: <span class="text-indigo-300 font-medium">${state.date}</span></p>
-                    </div>
-                    <div class="mt-6 md:mt-0 z-10 flex space-x-3">
-                        <button onclick="switchTab('scoring')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center space-x-2 text-sm">
-                            <i class="fa-solid fa-award"></i><span>Enter Results</span>
-                        </button>
-                        <button onclick="switchTab('public-portal')" class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold px-5 py-2.5 rounded-xl border border-slate-700 transition flex items-center space-x-2 text-sm">
-                            <i class="fa-solid fa-globe"></i><span>Public View</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Stats Grid -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center justify-between shadow-sm">
-                        <div>
-                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Teams</p>
-                            <h3 class="text-2xl font-bold text-white mt-1">${state.teams.length}</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-indigo-500/10 border border-indigo-500/20 rounded-xl flex items-center justify-center text-indigo-400 text-xl"><i class="fa-solid fa-shield-halved"></i></div>
-                    </div>
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center justify-between shadow-sm">
-                        <div>
-                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Registered Participants</p>
-                            <h3 class="text-2xl font-bold text-white mt-1">${state.participants.length}</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-purple-500/10 border border-purple-500/20 rounded-xl flex items-center justify-center text-purple-400 text-xl"><i class="fa-solid fa-users"></i></div>
-                    </div>
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center justify-between shadow-sm">
-                        <div>
-                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Events</p>
-                            <h3 class="text-2xl font-bold text-white mt-1">${state.events.length}</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center text-blue-400 text-xl"><i class="fa-solid fa-calendar-days"></i></div>
-                    </div>
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center justify-between shadow-sm">
-                        <div>
-                            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Current Leader</p>
-                            <h3 class="text-xl font-bold text-amber-400 mt-1 truncate max-w-[150px]">${leader.name}</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center text-amber-400 text-xl"><i class="fa-solid fa-crown"></i></div>
-                    </div>
-                </div>
-
-                <!-- Live Leaderboard Preview -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="font-bold text-lg text-white flex items-center space-x-2"><i class="fa-solid fa-ranking-star text-indigo-400"></i><span>Live Team Standings</span></h3>
-                            <button onclick="switchTab('scoring')" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold">View All Scores &rarr;</button>
-                        </div>
-                        <div class="space-y-3">
-                            ${sortedTeams.map((team, index) => `
-                                <div class="flex items-center justify-between p-4 rounded-xl bg-slate-800/50 border border-slate-800 hover:border-slate-700 transition">
-                                    <div class="flex items-center space-x-4">
-                                        <span class="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs ${index === 0 ? 'bg-amber-500 text-slate-950 font-extrabold' : index === 1 ? 'bg-slate-300 text-slate-950' : index === 2 ? 'bg-amber-700 text-white' : 'bg-slate-800 text-slate-400'}">${index + 1}</span>
-                                        <div class="w-3 h-3 rounded-full" style="background-color: ${team.color}"></div>
-                                        <div>
-                                            <h4 class="font-semibold text-white text-sm">${team.name}</h4>
-                                            <span class="text-xs text-slate-400 font-mono">Code: ${team.code}</span>
-                                        </div>
-                                    </div>
-                                    <div class="text-right">
-                                        <span class="text-lg font-extrabold text-indigo-400">${team.points}</span>
-                                        <span class="text-xs text-slate-400 block">Pts</span>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-
-                    <!-- Quick Actions Panel -->
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
-                        <div>
-                            <h3 class="font-bold text-lg text-white mb-4 flex items-center space-x-2"><i class="fa-solid fa-bolt text-amber-400"></i><span>Quick Shortcuts</span></h3>
-                            <div class="space-y-2.5">
-                                <button onclick="switchTab('registrations')" class="w-full text-left px-4 py-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 text-sm font-medium flex items-center justify-between border border-slate-700/60 transition">
-                                    <span class="flex items-center space-x-3"><i class="fa-solid fa-user-plus text-purple-400"></i><span>Register New Participant</span></span>
-                                    <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
-                                </button>
-                                <button onclick="switchTab('events')" class="w-full text-left px-4 py-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 text-sm font-medium flex items-center justify-between border border-slate-700/60 transition">
-                                    <span class="flex items-center space-x-3"><i class="fa-solid fa-calendar-plus text-blue-400"></i><span>Add New Festival Event</span></span>
-                                    <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
-                                </button>
-                                <button onclick="switchTab('poster')" class="w-full text-left px-4 py-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 text-sm font-medium flex items-center justify-between border border-slate-700/60 transition">
-                                    <span class="flex items-center space-x-3"><i class="fa-solid fa-image text-cyan-400"></i><span>Generate Result Poster</span></span>
-                                    <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
-                                </button>
-                                <button onclick="switchTab('setup')" class="w-full text-left px-4 py-3 rounded-xl bg-slate-800/80 hover:bg-slate-800 text-slate-200 text-sm font-medium flex items-center justify-between border border-slate-700/60 transition">
-                                    <span class="flex items-center space-x-3"><i class="fa-solid fa-gears text-emerald-400"></i><span>Configure Fest Details</span></span>
-                                    <i class="fa-solid fa-chevron-right text-xs text-slate-500"></i>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 pt-4 border-t border-slate-800 text-center">
-                            <p class="text-xs text-slate-500">FestMaster Pro v3.5 • All changes saved locally instantly.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        // --- 2. SETUP & TEAMS MANAGEMENT ---
-        function renderSetupHTML() {
-            return `
-            <div class="space-y-8 max-w-5xl mx-auto">
-                <!-- Festival General Details -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                    <h3 class="text-lg font-bold text-white mb-4 flex items-center space-x-2"><i class="fa-solid fa-sliders text-emerald-400"></i><span>Festival General Settings</span></h3>
-                    <form onsubmit="saveFestSettings(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Festival Name</label>
-                            <input type="text" id="set-fest-name" value="${state.festName}" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Subtitle / Tagline</label>
-                            <input type="text" id="set-fest-sub" value="${state.festSubtitle}" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Venue</label>
-                            <input type="text" id="set-fest-venue" value="${state.venue}" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Date</label>
-                            <input type="date" id="set-fest-date" value="${state.date}" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500" required>
-                        </div>
-                        <div class="md:col-span-2 flex justify-end">
-                            <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition shadow-lg shadow-emerald-600/20">Save Festival Details</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Teams / Houses Management -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                        <div>
-                            <h3 class="text-lg font-bold text-white flex items-center space-x-2"><i class="fa-solid fa-shield-halved text-indigo-400"></i><span>Teams / Houses Management</span></h3>
-                            <p class="text-xs text-slate-400 mt-1">Create and customize competing teams or college houses.</p>
-                        </div>
-                        <button onclick="openAddTeamModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 flex items-center space-x-2">
-                            <i class="fa-solid fa-plus"></i><span>Add New Team</span>
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        ${state.teams.map(team => `
-                            <div class="bg-slate-800/60 border border-slate-800 rounded-xl p-4 flex items-center justify-between">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-5 h-5 rounded-full flex-shrink-0" style="background-color: ${team.color}"></div>
-                                    <div>
-                                        <h4 class="font-bold text-white text-sm">${team.name}</h4>
-                                        <div class="flex items-center space-x-2 mt-0.5">
-                                            <span class="text-xs font-mono bg-slate-900 px-2 py-0.5 rounded text-indigo-300">Code: ${team.code}</span>
-                                            <span class="text-xs text-slate-400">${state.participants.filter(p => p.teamId === team.id).length} Participants</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <button onclick="editTeam('${team.id}')" class="p-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-xs transition"><i class="fa-solid fa-pen"></i></button>
-                                    <button onclick="deleteTeam('${team.id}')" class="p-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-lg text-xs transition"><i class="fa-solid fa-trash"></i></button>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        function saveFestSettings(e) {
-            e.preventDefault();
-            state.festName = document.getElementById('set-fest-name').value;
-            state.festSubtitle = document.getElementById('set-fest-sub').value;
-            state.venue = document.getElementById('set-fest-venue').value;
-            state.date = document.getElementById('set-fest-date').value;
-            saveState();
-            showModal('Success', 'Festival details successfully updated!', 'success');
-        }
-
-        function openAddTeamModal(teamId = null) {
-            const team = teamId ? state.teams.find(t => t.id === teamId) : { id: '', name: '', code: '', color: '#3b82f6' };
-            const isEdit = !!teamId;
-
-            let html = `
-            <div class="space-y-4">
-                <input type="hidden" id="modal-team-id" value="${team.id}">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Team Name</label>
-                    <input type="text" id="modal-team-name" value="${team.name}" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500" placeholder="e.g. Phoenix Blazers" required>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Team Code (Short)</label>
-                    <input type="text" id="modal-team-code" value="${team.code}" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500" placeholder="e.g. PHX" required maxlength="5">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Theme Color</label>
-                    <input type="color" id="modal-team-color" value="${team.color || '#3b82f6'}" class="w-full h-10 bg-slate-800 border border-slate-700 rounded-xl px-2 py-1 cursor-pointer">
-                </div>
-                <div class="flex justify-end space-x-3 pt-2">
-                    <button onclick="closeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold rounded-xl transition">Cancel</button>
-                    <button onclick="saveTeamAction(${isEdit})" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold rounded-xl transition">Save Team</button>
-                </div>
-            </div>`;
-
-            showCustomModalBox(isEdit ? 'Edit Team' : 'Add New Team', html, 'indigo');
-        }
-
-        function editTeam(id) {
-            openAddTeamModal(id);
-        }
-
-        function saveTeamAction(isEdit) {
-            const id = document.getElementById('modal-team-id').value;
-            const name = document.getElementById('modal-team-name').value;
-            const code = document.getElementById('modal-team-code').value.toUpperCase();
-            const color = document.getElementById('modal-team-color').value;
-
-            if (!name || !code) {
-                alert('Please fill out all required fields.');
+            if(scores.length === 0) {
+                container.innerHTML = '<p class="text-gray-500">ഇതുവരെ റിസൾട്ടുകൾ ഒന്നും അപ്ഡേറ്റ് ചെയ്തിട്ടില്ല.</p>';
                 return;
             }
-
-            if (isEdit) {
-                const team = state.teams.find(t => t.id === id);
-                if (team) {
-                    team.name = name;
-                    team.code = code;
-                    team.color = color;
-                }
-            } else {
-                const newTeam = {
-                    id: 'team-' + Date.now(),
-                    name,
-                    code,
-                    color,
-                    points: 0
-                };
-                state.teams.push(newTeam);
-            }
-
-            saveState();
-            closeModal();
-            renderTabContent('setup');
-        }
-
-        function deleteTeam(id) {
-            if (state.teams.length <= 1) {
-                showModal('Error', 'You must have at least one team.', 'error');
-                return;
-            }
-            state.teams = state.teams.filter(t => t.id !== id);
-            saveState();
-            renderTabContent('setup');
-        }
-
-        // --- 3. CODE LETTERS & CHEST NUMBERS ---
-        function renderCodeLettersHTML() {
-            return `
-            <div class="space-y-8 max-w-5xl mx-auto">
-                <!-- Code Letters Setup -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+            scores.forEach(s => {
+                container.innerHTML += `
+                    <div class="p-3 border rounded flex justify-between items-center bg-gray-50">
                         <div>
-                            <h3 class="text-lg font-bold text-white flex items-center space-x-2"><i class="fa-solid fa-barcode text-amber-400"></i><span>Event Category Code Letters</span></h3>
-                            <p class="text-xs text-slate-400 mt-1">Assign prefix codes for categories (e.g., DAN for Dance, MUS for Music) to structure chest numbers.</p>
+                            <span class="font-bold text-indigo-600">${s.item}</span> - ${s.name} (${s.chest})
                         </div>
-                        <button onclick="openAddCodeLetterModal()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-sm px-4 py-2.5 rounded-xl transition shadow-lg shadow-amber-600/20 flex items-center space-x-2">
-                            <i class="fa-solid fa-plus"></i><span>Add Code Letter</span>
-                        </button>
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded font-bold">${s.points} Pts</span>
                     </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        ${state.codeLetters.map(cl => `
-                            <div class="bg-slate-800/60 border border-slate-800 rounded-xl p-4 flex items-center justify-between">
-                                <div>
-                                    <span class="text-xs font-mono bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded border border-amber-500/20 font-bold">${cl.code}</span>
-                                    <h4 class="font-bold text-white text-sm mt-2">${cl.name}</h4>
-                                    <span class="text-xs text-slate-400">Prefix format: ${cl.code}-XXX</span>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <button onclick="deleteCodeLetter('${cl.id}')" class="p-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-lg text-xs transition"><i class="fa-solid fa-trash"></i></button>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-
-                <!-- Chest Number Customization Rule -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                    <h3 class="text-lg font-bold text-white mb-2 flex items-center space-x-2"><i class="fa-solid fa-id-card text-purple-400"></i><span>Chest Number Generation Rules</span></h3>
-                    <p class="text-xs text-slate-400 mb-6">Configure how participant chest numbers are automatically generated during registration.</p>
-                    
-                    <form onsubmit="saveChestConfig(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Starting Number Series</label>
-                            <input type="number" id="chest-start-no" value="${state.chestNumberConfig.startNumber}" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Chest Number Format</label>
-                            <select id="chest-format" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500">
-                                <option value="{CODE}-{NUM}" ${state.chestNumberConfig.prefixFormat === '{CODE}-{NUM}' ? 'selected' : ''}>Category Code + Number (e.g. DAN-101)</option>
-                                <option value="NUM" ${state.chestNumberConfig.prefixFormat === 'NUM' ? 'selected' : ''}>Pure Number only (e.g. 101)</option>
-                            </select>
-                        </div>
-                        <div class="md:col-span-2 flex justify-end">
-                            <button type="submit" class="bg-purple-600 hover:bg-purple-500 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition shadow-lg shadow-purple-600/20">Save Chest Number Rules</button>
-                        </div>
-                    </form>
-                </div>
-            </div>`;
-        }
-
-        function openAddCodeLetterModal() {
-            let html = `
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Category Name</label>
-                    <input type="text" id="modal-cl-name" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500" placeholder="e.g. Classical Music" required>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Code Abbreviation (3-4 letters)</label>
-                    <input type="text" id="modal-cl-code" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500" placeholder="e.g. MUS" required maxlength="5">
-                </div>
-                <div class="flex justify-end space-x-3 pt-2">
-                    <button onclick="closeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold rounded-xl transition">Cancel</button>
-                    <button onclick="saveCodeLetterAction()" class="px-5 py-2 bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold text-sm rounded-xl transition">Add Code</button>
-                </div>
-            </div>`;
-            showCustomModalBox('Add Code Letter', html, 'amber');
-        }
-
-        function saveCodeLetterAction() {
-            const name = document.getElementById('modal-cl-name').value;
-            const code = document.getElementById('modal-cl-code').value.toUpperCase();
-            if (!name || !code) return;
-
-            state.codeLetters.push({ id: 'cl-' + Date.now(), name, code, prefix: code.charAt(0) });
-            saveState();
-            closeModal();
-            renderTabContent('codeletters');
-        }
-
-        function deleteCodeLetter(id) {
-            state.codeLetters = state.codeLetters.filter(c => c.id !== id);
-            saveState();
-            renderTabContent('codeletters');
-        }
-
-        function saveChestConfig(e) {
-            e.preventDefault();
-            state.chestNumberConfig.startNumber = parseInt(document.getElementById('chest-start-no').value);
-            state.chestNumberConfig.prefixFormat = document.getElementById('chest-format').value;
-            saveState();
-            showModal('Success', 'Chest number rules saved successfully!', 'success');
-        }
-
-        // --- 4. EVENTS MANAGEMENT ---
-        function renderEventsHTML() {
-            return `
-            <div class="space-y-6 max-w-6xl mx-auto">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                    <div>
-                        <h3 class="text-lg font-bold text-white flex items-center space-x-2"><i class="fa-solid fa-calendar-days text-blue-400"><span>Festival Events Management</span></h3>
-                        <p class="text-xs text-slate-400 mt-1">Configure stage/off-stage items, solo/group types, and points distribution.</p>
-                    </div>
-                    <button onclick="openAddEventModal()" class="bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition shadow-lg shadow-blue-600/20 flex items-center space-x-2">
-                        <i class="fa-solid fa-plus"></i><span>Add New Event</span>
-                    </button>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    ${state.events.map(ev => {
-                        const cat = state.codeLetters.find(c => c.code === ev.category);
-                        return `
-                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between shadow-sm">
-                            <div>
-                                <div class="flex items-center justify-between mb-3">
-                                    <span class="text-xs font-mono bg-blue-500/10 text-blue-400 px-2.5 py-1 rounded-lg border border-blue-500/20 font-bold">${ev.category}</span>
-                                    <span class="text-xs font-semibold px-2 py-0.5 rounded ${ev.type === 'Solo' ? 'bg-purple-500/10 text-purple-300' : 'bg-emerald-500/10 text-emerald-300'}">${ev.type}</span>
-                                </div>
-                                <h4 class="font-bold text-white text-base mb-1">${ev.name}</h4>
-                                <p class="text-xs text-slate-400 mb-4">${cat ? cat.name : 'General'}</p>
-                            </div>
-                            <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs">
-                                <span class="text-slate-400">Points: <b class="text-indigo-400">1st: ${ev.points1st || 5}, 2nd: ${ev.points2nd || 3}, 3rd: ${ev.points3rd || 1}</b></span>
-                                <div class="flex space-x-2">
-                                    <button onclick="deleteEvent('${ev.id}')" class="p-2 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-lg transition"><i class="fa-solid fa-trash"></i></button>
-                                </div>
-                            </div>
-                        </div>`;
-                    }).join('')}
-                </div>
-            </div>`;
-        }
-
-        function openAddEventModal() {
-            let html = `
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Event Name</label>
-                    <input type="text" id="modal-ev-name" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500" placeholder="e.g. Bharatanatyam" required>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Category Code</label>
-                        <select id="modal-ev-cat" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500">
-                            ${state.codeLetters.map(c => `<option value="${c.code}">${c.code} - ${c.name}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Event Type</label>
-                        <select id="modal-ev-type" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500">
-                            <option value="Solo">Solo</option>
-                            <option value="Group">Group</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="grid grid-cols-3 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">1st Pts</label>
-                        <input type="number" id="modal-ev-p1" value="5" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">2nd Pts</label>
-                        <input type="number" id="modal-ev-p2" value="3" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">3rd Pts</label>
-                        <input type="number" id="modal-ev-p3" value="1" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-white text-sm">
-                    </div>
-                </div>
-                <div class="flex justify-end space-x-3 pt-2">
-                    <button onclick="closeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-semibold rounded-xl transition">Cancel</button>
-                    <button onclick="saveEventAction()" class="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm rounded-xl transition">Save Event</button>
-                </div>
-            </div>`;
-            showCustomModalBox('Add New Festival Event', html, 'blue');
-        }
-
-        function saveEventAction() {
-            const name = document.getElementById('modal-ev-name').value;
-            const category = document.getElementById('modal-ev-cat').value;
-            const type = document.getElementById('modal-ev-type').value;
-            const points1st = parseInt(document.getElementById('modal-ev-p1').value) || 5;
-            const points2nd = parseInt(document.getElementById('modal-ev-p2').value) || 3;
-            const points3rd = parseInt(document.getElementById('modal-ev-p3').value) || 1;
-
-            if (!name) return;
-
-            state.events.push({
-                id: 'ev-' + Date.now(),
-                name,
-                category,
-                type,
-                points1st,
-                points2nd,
-                points3rd
+                `;
             });
-
-            saveState();
-            closeModal();
-            renderTabContent('events');
         }
 
-        function deleteEvent(id) {
-            state.events = state.events.filter(e => e.id !== id);
-            state.participants = state.participants.filter(p => p.eventId !== id);
-            saveState();
-            renderTabContent('events');
-        }
-
-        // --- 5. PARTICIPANT REGISTRATION ---
-        function renderRegistrationsHTML() {
-            return `
-            <div class="space-y-6 max-w-6xl mx-auto">
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                    <h3 class="text-lg font-bold text-white mb-4 flex items-center space-x-2"><i class="fa-solid fa-user-plus text-purple-400"></i><span>Register Participant for Event</span></h3>
-                    <form onsubmit="registerParticipant(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Participant Full Name</label>
-                            <input type="text" id="reg-name" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500" placeholder="e.g. John Doe" required>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Select Team / House</label>
-                            <select id="reg-team" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500" required>
-                                ${state.teams.map(t => `<option value="${t.id}">${t.name} (${t.code})</option>`).join('')}
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Select Event</label>
-                            <select id="reg-event" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500" required>
-                                ${state.events.map(e => `<option value="${e.id}">${e.name} [${e.category}]</option>`).join('')}
-                            </select>
-                        </div>
-                        <div class="flex items-end">
-                            <button type="submit" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition shadow-lg shadow-purple-600/20">Register & Assign Chest No</button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Participants List -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-lg text-white">Registered Participants (${state.participants.length})</h3>
-                        <input type="text" id="search-participant" oninput="filterParticipants()" placeholder="Search participant or chest no..." class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-indigo-500 w-64">
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm text-slate-300">
-                            <thead class="bg-slate-800/80 text-xs uppercase text-slate-400">
-                                <tr>
-                                    <th class="px-4 py-3 rounded-l-xl">Chest No</th>
-                                    <th class="px-4 py-3">Participant Name</th>
-                                    <th class="px-4 py-3">Team / House</th>
-                                    <th class="px-4 py-3">Event</th>
-                                    <th class="px-4 py-3 rounded-r-xl text-right">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="participants-table-body" class="divide-y divide-slate-800">
-                                ${renderParticipantsTableRows(state.participants)}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        function renderParticipantsTableRows(parts) {
-            if (parts.length === 0) {
-                return `<tr><td colspan="5" class="px-4 py-6 text-center text-slate-500">No participants registered yet.</td></tr>`;
-            }
-            return parts.map(p => {
-                const team = state.teams.find(t => t.id === p.teamId);
-                const event = state.events.find(e => e.id === p.eventId);
-                return `
-                <tr class="hover:bg-slate-800/40 transition">
-                    <td class="px-4 py-3 font-mono font-bold text-indigo-400">${p.chestNo}</td>
-                    <td class="px-4 py-3 font-semibold text-white">${p.name}</td>
-                    <td class="px-4 py-3"><span class="inline-flex items-center space-x-1.5"><span class="w-2.5 h-2.5 rounded-full" style="background-color: ${team ? team.color : '#fff'}"></span><span>${team ? team.name : 'Unknown'}</span></span></td>
-                    <td class="px-4 py-3">${event ? event.name : 'Unknown'}</td>
-                    <td class="px-4 py-3 text-right">
-                        <button onclick="deleteParticipant('${p.id}')" class="p-1.5 bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 rounded-lg text-xs transition"><i class="fa-solid fa-trash"></i></button>
-                    </td>
-                </tr>`;
-            }).join('');
-        }
-
-        function registerParticipant(e) {
-            e.preventDefault();
-            const name = document.getElementById('reg-name').value;
-            const teamId = document.getElementById('reg-team').value;
-            const eventId = document.getElementById('reg-event').value;
-            const eventObj = state.events.find(ev => ev.id === eventId);
-            if (!eventObj) return;
-
-            // Generate Chest Number
-            const countForCat = state.participants.filter(p => p.category === eventObj.category).length + 1;
-            const startNo = state.chestNumberConfig.startNumber || 101;
-            const num = startNo + countForCat - 1;
-            const chestNo = state.chestNumberConfig.prefixFormat === 'NUM' ? `${num}` : `${eventObj.category}-${num}`;
-
-            const newPart = {
-                id: 'p-' + Date.now(),
-                name,
-                chestNo,
-                teamId,
-                category: eventObj.category,
-                eventId
-            };
-
-            state.participants.push(newPart);
-            saveState();
-            renderTabContent('registrations');
-            showModal('Success', `Participant registered successfully with Chest No: ${chestNo}`, 'success');
-        }
-
-        function deleteParticipant(id) {
-            state.participants = state.participants.filter(p => p.id !== id);
-            saveState();
-            renderTabContent('registrations');
-        }
-
-        function filterParticipants() {
-            const query = document.getElementById('search-participant').value.toLowerCase();
-            const filtered = state.participants.filter(p => p.name.toLowerCase().includes(query) || p.chestNo.toLowerCase().includes(query));
-            document.getElementById('participants-table-body').innerHTML = renderParticipantsTableRows(filtered);
-        }
-
-        // --- 6. POINTS SCORE & RESULT ENTRY ---
-        function renderScoringHTML() {
-            return `
-            <div class="space-y-6 max-w-6xl mx-auto">
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                    <h3 class="text-lg font-bold text-white mb-2 flex items-center space-x-2"><i class="fa-solid fa-award text-rose-400"></i><span>Event Points & Result Entry</span></h3>
-                    <p class="text-xs text-slate-400 mb-6">Assign 1st, 2nd, and 3rd place winners for each festival event. Points are automatically calculated for the teams.</p>
-                    
-                    <div class="space-y-6">
-                        ${state.events.map(ev => {
-                            const result = state.results.find(r => r.eventId === ev.id) || { first: '', second: '', third: '' };
-                            const eventParticipants = state.participants.filter(p => p.eventId === ev.id);
-
-                            return `
-                            <div class="bg-slate-800/50 border border-slate-800 rounded-xl p-5">
-                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 pb-3 border-b border-slate-800 gap-2">
-                                    <div>
-                                        <div class="flex items-center space-x-2">
-                                            <span class="text-xs font-mono bg-rose-500/10 text-rose-400 px-2 py-0.5 rounded font-bold">${ev.category}</span>
-                                            <span class="text-xs text-slate-400">(${ev.type})</span>
-                                        </div>
-                                        <h4 class="font-bold text-white text-base mt-1">${ev.name}</h4>
-                                    </div>
-                                    <span class="text-xs text-slate-400">Points: 1st(${ev.points1st || 5}), 2nd(${ev.points2nd || 3}), 3rd(${ev.points3rd || 1})</span>
-                                </div>
-
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div>
-                                        <label class="block text-xs font-semibold text-amber-400 uppercase mb-1"><i class="fa-solid fa-medal mr-1"></i> 1st Place Winner</label>
-                                        <select onchange="saveResultWin('${ev.id}', 'first', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-indigo-500">
-                                            <option value="">-- Select Winner --</option>
-                                            ${eventParticipants.map(p => `<option value="${p.id}" ${result.first === p.id ? 'selected' : ''}>${p.chestNo} - ${p.name}</option>`).join('')}
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-semibold text-slate-300 uppercase mb-1"><i class="fa-solid fa-medal mr-1"></i> 2nd Place Winner</label>
-                                        <select onchange="saveResultWin('${ev.id}', 'second', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-indigo-500">
-                                            <option value="">-- Select Winner --</option>
-                                            ${eventParticipants.map(p => `<option value="${p.id}" ${result.second === p.id ? 'selected' : ''}>${p.chestNo} - ${p.name}</option>`).join('')}
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-semibold text-amber-600 uppercase mb-1"><i class="fa-solid fa-medal mr-1"></i> 3rd Place Winner</label>
-                                        <select onchange="saveResultWin('${ev.id}', 'third', this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs focus:outline-none focus:border-indigo-500">
-                                            <option value="">-- Select Winner --</option>
-                                            ${eventParticipants.map(p => `<option value="${p.id}" ${result.third === p.id ? 'selected' : ''}>${p.chestNo} - ${p.name}</option>`).join('')}
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>`;
-                        }).join('')}
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        function saveResultWin(eventId, position, participantId) {
-            let res = state.results.find(r => r.eventId === eventId);
-            if (!res) {
-                res = { eventId, first: '', second: '', third: '' };
-                state.results.push(res);
-            }
-            res[position] = participantId;
-            saveState();
-        }
-
-        // --- 7. RESULT POSTER GENERATOR ---
-        function renderPosterHTML() {
-            recalculatePoints();
-            const sortedTeams = [...state.teams].sort((a,b) => b.points - a.points);
-            const champion = sortedTeams[0] || { name: 'Champion Team', points: 0 };
-
-            return `
-            <div class="space-y-6 max-w-5xl mx-auto">
-                <div class="flex justify-between items-center bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm no-print">
-                    <div>
-                        <h3 class="text-lg font-bold text-white flex items-center space-x-2"><i class="fa-solid fa-image text-cyan-400"></i><span>Result Poster Generator</span></h3>
-                        <p class="text-xs text-slate-400 mt-1">Create professional festival winners banners & championship cards to share.</p>
-                    </div>
-                    <button onclick="window.print()" class="bg-cyan-600 hover:bg-cyan-500 text-slate-950 font-bold text-sm px-5 py-2.5 rounded-xl transition shadow-lg shadow-cyan-600/20 flex items-center space-x-2">
-                        <i class="fa-solid fa-print"></i><span>Print / Save Poster</span>
-                    </button>
-                </div>
-
-                <!-- Printable Poster Canvas Box -->
-                <div id="poster-canvas" class="bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 border-2 border-indigo-500/50 rounded-3xl p-8 md:p-12 shadow-2xl relative overflow-hidden text-center space-y-8">
-                    <div class="absolute -top-20 -left-20 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
-                    
-                    <div class="space-y-2">
-                        <span class="bg-amber-500/20 text-amber-300 font-bold text-xs uppercase px-4 py-1.5 rounded-full border border-amber-500/30 tracking-widest">OFFICIAL FESTIVAL RESULTS</span>
-                        <h2 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight pt-2">${state.festName}</h2>
-                        <p class="text-indigo-300 text-sm md:text-base">${state.festSubtitle} • ${state.venue}</p>
-                    </div>
-
-                    <!-- Overall Champion Highlight -->
-                    <div class="bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-amber-500/20 border border-amber-500/40 rounded-2xl p-6 max-w-lg mx-auto shadow-xl">
-                        <div class="w-12 h-12 bg-amber-500 text-slate-950 font-extrabold text-xl rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-amber-500/30">
-                            <i class="fa-solid fa-crown"></i>
-                        </div>
-                        <span class="text-xs font-semibold text-amber-400 uppercase tracking-wider">OVERALL CHAMPIONS</span>
-                        <h3 class="text-2xl md:text-3xl font-black text-white mt-1">${champion.name}</h3>
-                        <p class="text-amber-300 text-sm font-bold mt-1">${champion.points} Total Points</p>
-                    </div>
-
-                    <!-- All Teams Standing Grid -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
-                        ${sortedTeams.map((t, idx) => `
-                            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 text-center">
-                                <span class="text-xs font-bold text-slate-400">#${idx + 1}</span>
-                                <h4 class="font-bold text-white text-sm mt-1 truncate">${t.name}</h4>
-                                <span class="text-lg font-black text-indigo-400 mt-2 block">${t.points} Pts</span>
-                            </div>
-                        `).join('')}
-                    </div>
-
-                    <div class="pt-6 border-t border-slate-800 flex justify-between items-center text-xs text-slate-400">
-                        <span>Date: ${state.date}</span>
-                        <span class="font-bold text-indigo-400">FestMaster Pro Suite</span>
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        // --- 8. PUBLIC PORTAL ---
-        function renderPublicPortalHTML() {
-            recalculatePoints();
-            const sortedTeams = [...state.teams].sort((a,b) => b.points - a.points);
-
-            return `
-            <div class="space-y-6 max-w-5xl mx-auto">
-                <div class="bg-gradient-to-r from-teal-900/40 to-slate-900 border border-teal-500/30 rounded-3xl p-6 text-center space-y-2">
-                    <span class="bg-teal-500/20 text-teal-300 font-semibold text-xs px-3 py-1 rounded-full uppercase tracking-wider">Public Live Broadcast</span>
-                    <h2 class="text-2xl md:text-3xl font-extrabold text-white">${state.festName} - Live Scoreboard</h2>
-                    <p class="text-slate-300 text-xs">Real-time standings & published event results for participants and attendees.</p>
-                </div>
-
-                <!-- Live Standings Table -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                    <h3 class="text-lg font-bold text-white mb-4 flex items-center space-x-2"><i class="fa-solid fa-ranking-star text-teal-400"></i><span>Overall Team Standings</span></h3>
-                    <div class="space-y-3">
-                        ${sortedTeams.map((team, index) => `
-                            <div class="flex items-center justify-between p-4 rounded-xl bg-slate-800/50 border border-slate-800">
-                                <div class="flex items-center space-x-4">
-                                    <span class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${index === 0 ? 'bg-amber-500 text-slate-950 font-extrabold' : index === 1 ? 'bg-slate-300 text-slate-950' : index === 2 ? 'bg-amber-700 text-white' : 'bg-slate-800 text-slate-400'}">${index + 1}</span>
-                                    <div class="w-3.5 h-3.5 rounded-full" style="background-color: ${team.color}"></div>
-                                    <div>
-                                        <h4 class="font-bold text-white text-sm">${team.name}</h4>
-                                        <span class="text-xs text-slate-400 font-mono">Code: ${team.code}</span>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-xl font-extrabold text-teal-400">${team.points}</span>
-                                    <span class="text-xs text-slate-400 block">Points</span>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-
-                <!-- Results Feed -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                    <h3 class="text-lg font-bold text-white mb-4 flex items-center space-x-2"><i class="fa-solid fa-award text-amber-400"></i><span>Published Event Results</span></h3>
-                    <div class="space-y-4">
-                        ${state.results.length === 0 ? '<p class="text-slate-500 text-sm text-center py-4">No results published yet.</p>' : state.results.map(res => {
-                            const event = state.events.find(e => e.id === res.eventId);
-                            if (!event) return '';
-                            const p1 = state.participants.find(p => p.id === res.first);
-                            const p2 = state.participants.find(p => p.id === res.second);
-                            const p3 = state.participants.find(p => p.id === res.third);
-                            return `
-                            <div class="bg-slate-800/60 border border-slate-800 rounded-xl p-4">
-                                <h4 class="font-bold text-white text-sm mb-3 flex items-center justify-between">
-                                    <span>${event.name}</span>
-                                    <span class="text-xs font-mono bg-slate-900 px-2 py-0.5 rounded text-indigo-300">${event.category}</span>
-                                </h4>
-                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                                    <div class="bg-amber-500/10 border border-amber-500/20 p-2.5 rounded-lg">
-                                        <span class="text-amber-400 font-bold block mb-0.5"><i class="fa-solid fa-medal mr-1"></i> 1st Place</span>
-                                        <span class="text-white font-semibold">${p1 ? p1.name + ' (' + p1.chestNo + ')' : 'Pending'}</span>
-                                    </div>
-                                    <div class="bg-slate-700/40 border border-slate-700 p-2.5 rounded-lg">
-                                        <span class="text-slate-300 font-bold block mb-0.5"><i class="fa-solid fa-medal mr-1"></i> 2nd Place</span>
-                                        <span class="text-white font-semibold">${p2 ? p2.name + ' (' + p2.chestNo + ')' : 'Pending'}</span>
-                                    </div>
-                                    <div class="bg-amber-700/20 border border-amber-700/30 p-2.5 rounded-lg">
-                                        <span class="text-amber-600 font-bold block mb-0.5"><i class="fa-solid fa-medal mr-1"></i> 3rd Place</span>
-                                        <span class="text-white font-semibold">${p3 ? p3.name + ' (' + p3.chestNo + ')' : 'Pending'}</span>
-                                    </div>
-                                </div>
-                            </div>`;
-                        }).join('')}
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        // --- 9. TEAM PORTAL VIEW ---
-        function renderTeamPortalHTML() {
-            const team = state.teams.find(t => t.id === state.selectedTeamPortalId) || state.teams[0];
-            const teamParticipants = state.participants.filter(p => p.teamId === team.id);
-
-            return `
-            <div class="space-y-6 max-w-5xl mx-auto">
-                <div class="bg-gradient-to-r from-orange-900/40 to-slate-900 border border-orange-500/30 rounded-3xl p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div>
-                        <span class="bg-orange-500/20 text-orange-300 font-semibold text-xs px-3 py-1 rounded-full uppercase tracking-wider">Team Portal View</span>
-                        <h2 class="text-2xl md:text-3xl font-extrabold text-white mt-1">${team.name} Dashboard</h2>
-                        <p class="text-slate-300 text-xs">Check team roster, chest numbers, and live points.</p>
-                    </div>
-                    <div>
-                        <select onchange="changeTeamPortal(this.value)" class="bg-slate-800 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:outline-none focus:border-indigo-500">
-                            ${state.teams.map(t => `<option value="${t.id}" ${t.id === team.id ? 'selected' : ''}>Switch Team: ${t.name}</option>`).join('')}
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Team Stat Highlights -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-semibold text-slate-400 uppercase">Total Points</p>
-                            <h3 class="text-3xl font-black text-orange-400 mt-1">${team.points}</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-orange-500/10 border border-orange-500/20 rounded-xl flex items-center justify-center text-orange-400 text-xl"><i class="fa-solid fa-award"></i></div>
-                    </div>
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-semibold text-slate-400 uppercase">Registered Participants</p>
-                            <h3 class="text-3xl font-black text-white mt-1">${teamParticipants.length}</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-indigo-500/10 border border-indigo-500/20 rounded-xl flex items-center justify-center text-indigo-400 text-xl"><i class="fa-solid fa-users"></i></div>
-                    </div>
-                </div>
-
-                <!-- Participants Roster -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm">
-                    <h3 class="font-bold text-lg text-white mb-4 flex items-center space-x-2"><i class="fa-solid fa-id-card text-orange-400"></i><span>${team.name} - Participant Roster & Chest Numbers</span></h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm text-slate-300">
-                            <thead class="bg-slate-800/80 text-xs uppercase text-slate-400">
-                                <tr>
-                                    <th class="px-4 py-3 rounded-l-xl">Chest No</th>
-                                    <th class="px-4 py-3">Participant Name</th>
-                                    <th class="px-4 py-3">Category</th>
-                                    <th class="px-4 py-3 rounded-r-xl">Event</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-800">
-                                ${teamParticipants.length === 0 ? '<tr><td colspan="4" class="px-4 py-6 text-center text-slate-500">No participants registered for this team yet.</td></tr>' : teamParticipants.map(p => {
-                                    const ev = state.events.find(e => e.id === p.eventId);
-                                    return `
-                                    <tr class="hover:bg-slate-800/40 transition">
-                                        <td class="px-4 py-3 font-mono font-bold text-orange-400">${p.chestNo}</td>
-                                        <td class="px-4 py-3 font-semibold text-white">${p.name}</td>
-                                        <td class="px-4 py-3"><span class="text-xs font-mono bg-slate-800 px-2 py-0.5 rounded text-slate-300">${p.category}</span></td>
-                                        <td class="px-4 py-3">${ev ? ev.name : 'Unknown'}</td>
-                                    </tr>`;
-                                }).join('')}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        function changeTeamPortal(teamId) {
-            state.selectedTeamPortalId = teamId;
-            renderTabContent('team-portal');
-        }
-
-        // --- UTILITY MODALS & EXPORT/IMPORT ---
-        function showModal(title, message, type = 'info') {
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-message').innerText = message;
-            const iconDiv = document.getElementById('modal-icon');
-            if (type === 'success') {
-                iconDiv.className = 'w-10 h-10 rounded-xl flex items-center justify-center text-lg bg-emerald-500/20 text-emerald-400';
-                iconDiv.innerHTML = '<i class="fa-solid fa-check"></i>';
-            } else {
-                iconDiv.className = 'w-10 h-10 rounded-xl flex items-center justify-center text-lg bg-indigo-500/20 text-indigo-400';
-                iconDiv.innerHTML = '<i class="fa-solid fa-info"></i>';
-            }
-            document.getElementById('custom-modal').classList.remove('hidden');
-        }
-
-        function showCustomModalBox(title, htmlContent, theme = 'indigo') {
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-message').innerHTML = htmlContent;
-            document.getElementById('modal-icon').className = `w-10 h-10 rounded-xl flex items-center justify-center text-lg bg-${theme}-500/20 text-${theme}-400`;
-            document.getElementById('modal-icon').innerHTML = '<i class="fa-solid fa-pen-to-square"></i>';
-            document.getElementById('custom-modal').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('custom-modal').classList.add('hidden');
-        }
-
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('hidden');
-        }
-
-        function resetAllDataConfirmation() {
-            if (confirm('Are you sure you want to reset all festival data to default?')) {
-                localStorage.removeItem('festmaster_state');
-                state = JSON.parse(JSON.stringify(defaultState));
-                saveState();
-                switchTab('dashboard');
-                showModal('Reset Complete', 'All festival data has been reset to defaults.', 'success');
-            }
-        }
-
-        function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `festmaster_backup_${Date.now()}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        }
-
-        function importData(e) {
-            const fileReader = new FileReader();
-            if (e.target.files[0]) {
-                fileReader.readAsText(e.target.files[0], "UTF-8");
-                fileReader.onload = event => {
-                    try {
-                        const parsed = JSON.parse(event.target.result);
-                        state = parsed;
-                        saveState();
-                        switchTab('dashboard');
-                        showModal('Success', 'Festival data successfully imported!', 'success');
-                    } catch (err) {
-                        showModal('Error', 'Invalid backup JSON file format.', 'error');
-                    }
-                };
-            }
-        }
+        // Initial load
+        renderParticipants();
     </script>
 </body>
 </html>
-```
