@@ -1,0 +1,1313 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FestMaster - Ultimate Event & Arts Fest Management Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 h-full flex flex-col antialiased">
+
+    <div id="app" class="flex flex-col h-full w-full overflow-hidden">
+        
+        <!-- Fest Setup Wizard Modal / View (Shown if no fest created) -->
+        <div id="setup-view" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 border border-slate-100 transform transition-all">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-indigo-600 text-white rounded-2xl mx-auto flex items-center justify-center shadow-lg shadow-indigo-200 mb-4">
+                        <i data-lucide="sparkles" class="w-8 h-8"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-900">Create Your Arts Fest</h2>
+                    <p class="text-slate-500 text-sm mt-1">Set up your college fest, literary meet, or arts festival workspace.</p>
+                </div>
+                <form id="fest-setup-form" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Fest Name</label>
+                        <input type="text" id="setup-name" required placeholder="e.g. Sargotsav 2026 / Sahityolsav" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none text-slate-800 font-medium text-sm">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Organizer / College</label>
+                            <input type="text" id="setup-organizer" required placeholder="e.g. Dept. of Arts" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none text-slate-800 text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Fest Date</label>
+                            <input type="date" id="setup-date" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:outline-none text-slate-800 text-sm">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-indigo-200 transition-all flex items-center justify-center gap-2">
+                        <span>Launch Fest Portal</span>
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Application Header -->
+        <header class="bg-white border-b border-slate-200 shrink-0 z-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center shadow-md shadow-indigo-100 font-bold text-lg" id="fest-initials">FM</div>
+                    <div>
+                        <h1 class="font-bold text-slate-900 text-base leading-snug" id="header-fest-name">FestMaster</h1>
+                        <p class="text-xs text-slate-600 font-medium" id="header-organizer">Organizer: Loading...</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <button onclick="switchTab('public-portal')" class="hidden sm:flex items-center gap-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3.5 py-2 rounded-xl text-xs font-semibold transition border border-emerald-200">
+                        <i data-lucide="globe" class="w-4 h-4"></i>
+                        <span>Live Scoreboard</span>
+                    </button>
+                    <button onclick="openSettingsModal()" class="p-2 rounded-xl text-slate-500 hover:bg-slate-100 transition" title="Fest Settings & Backup">
+                        <i data-lucide="settings" class="w-5 h-5"></i>
+                    </button>
+                    <button onclick="resetFestData()" class="p-2 rounded-xl text-rose-500 hover:bg-rose-50 transition" title="Reset Fest">
+                        <i data-lucide="rotate-ccw" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Body Layout with Navigation -->
+        <div class="flex-1 flex overflow-hidden">
+            <!-- Sidebar Navigation -->
+            <aside class="w-64 bg-white border-r border-slate-200 flex flex-col shrink-0 no-print">
+                <div class="p-4 flex-1 overflow-y-auto space-y-1">
+                    <p class="px-3 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-600">Management</p>
+                    
+                    <button onclick="switchTab('dashboard')" data-tab="dashboard" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-slate-600 hover:bg-slate-50">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                        <span>Dashboard</span>
+                    </button>
+                    <button onclick="switchTab('teams')" data-tab="teams" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-slate-600 hover:bg-slate-50">
+                        <i data-lucide="shield" class="w-4 h-4"></i>
+                        <span>Teams & Houses</span>
+                    </button>
+                    <button onclick="switchTab('events')" data-tab="events" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-slate-600 hover:bg-slate-50">
+                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                        <span>Programs & Events</span>
+                    </button>
+                    <button onclick="switchTab('registrations')" data-tab="registrations" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-slate-600 hover:bg-slate-50">
+                        <i data-lucide="user-plus" class="w-4 h-4"></i>
+                        <span>Registrations</span>
+                    </button>
+                    <button onclick="switchTab('chest-numbers')" data-tab="chest-numbers" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-slate-600 hover:bg-slate-50">
+                        <i data-lucide="tag" class="w-4 h-4"></i>
+                        <span>Chest Numbers</span>
+                    </button>
+
+                    <p class="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-600">Scoring & Results</p>
+                    
+                    <button onclick="switchTab('results')" data-tab="results" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-slate-600 hover:bg-slate-50">
+                        <i data-lucide="award" class="w-4 h-4"></i>
+                        <span>Marks & Results Entry</span>
+                    </button>
+                    <button onclick="switchTab('scoreboard')" data-tab="scoreboard" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-slate-600 hover:bg-slate-50">
+                        <i data-lucide="trophy" class="w-4 h-4"></i>
+                        <span>Points Table</span>
+                    </button>
+                    <button onclick="switchTab('public-portal')" data-tab="public-portal" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-slate-600 hover:bg-slate-50 text-indigo-600 bg-indigo-50/50">
+                        <i data-lucide="globe" class="w-4 h-4"></i>
+                        <span>Team / Public Portal</span>
+                    </button>
+                </div>
+                <div class="p-4 border-t border-slate-100 bg-slate-50 text-xs text-slate-600">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="font-semibold">Local Storage</span>
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
+                    </div>
+                    <span>Data auto-saves securely.</span>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 bg-slate-50 overflow-y-auto p-4 sm:p-8">
+                
+                <!-- 1. DASHBOARD TAB -->
+                <div id="tab-dashboard" class="tab-content space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900">Dashboard Overview</h2>
+                            <p class="text-slate-500 text-sm">Real-time summary of your festival statistics and progress.</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="switchTab('registrations')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2">
+                                <i data-lucide="user-plus" class="w-4 h-4"></i>
+                                <span>New Registration</span>
+                            </button>
+                            <button onclick="switchTab('results')" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold px-4 py-2.5 rounded-xl shadow-sm transition flex items-center gap-2">
+                                <i data-lucide="award" class="w-4 h-4"></i>
+                                <span>Enter Results</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-600 uppercase">Total Teams</p>
+                                <h3 class="text-3xl font-extrabold text-slate-900 mt-1" id="stat-teams">0</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
+                                <i data-lucide="shield" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-600 uppercase">Participants</p>
+                                <h3 class="text-3xl font-extrabold text-slate-900 mt-1" id="stat-participants">0</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                                <i data-lucide="users" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-600 uppercase">Total Events</p>
+                                <h3 class="text-3xl font-extrabold text-slate-900 mt-1" id="stat-events">0</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                                <i data-lucide="calendar" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-xs font-semibold text-slate-600 uppercase">Completed Results</p>
+                                <h3 class="text-3xl font-extrabold text-slate-900 mt-1" id="stat-results">0</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                                <i data-lucide="award" class="w-6 h-6"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Leading Team & Recent Activity -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Leading Team Card -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="font-bold text-slate-900 text-base">Current Leader</h3>
+                                    <i data-lucide="trophy" class="w-5 h-5 text-amber-500"></i>
+                                </div>
+                                <div id="dashboard-leader-card" class="text-center py-6">
+                                    <p class="text-slate-600 text-sm">No scores calculated yet.</p>
+                                </div>
+                            </div>
+                            <button onclick="switchTab('scoreboard')" class="w-full mt-4 bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold py-2.5 rounded-xl border border-slate-200 transition">
+                                View Full Points Table
+                            </button>
+                        </div>
+
+                        <!-- Quick Events Status -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:col-span-2 flex flex-col">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-bold text-slate-900 text-base">Recent Events & Status</h3>
+                                <button onclick="switchTab('events')" class="text-xs text-indigo-600 font-semibold hover:underline">View All</button>
+                            </div>
+                            <div class="flex-1 overflow-x-auto">
+                                <table class="w-full text-left text-sm">
+                                    <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-600">
+                                        <tr>
+                                            <th class="px-4 py-3 rounded-l-xl">Event Name</th>
+                                            <th class="px-4 py-3">Category</th>
+                                            <th class="px-4 py-3">Type</th>
+                                            <th class="px-4 py-3 rounded-r-xl">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dashboard-events-tbody" class="divide-y divide-slate-100 font-medium text-slate-700">
+                                        <!-- Dynamic rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. TEAM MANAGEMENT TAB -->
+                <div id="tab-teams" class="tab-content space-y-6 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900">Team & House Management</h2>
+                            <p class="text-slate-500 text-sm">Create and customize competing houses or college teams.</p>
+                        </div>
+                        <button onclick="openTeamModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <span>Add New Team</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="teams-grid">
+                        <!-- Dynamic Team Cards -->
+                    </div>
+                </div>
+
+                <!-- 3. EVENT / PROGRAM MANAGEMENT TAB -->
+                <div id="tab-events" class="tab-content space-y-6 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900">Program & Event Management</h2>
+                            <p class="text-slate-500 text-sm">Define stage, off-stage events, categories, and point weights.</p>
+                        </div>
+                        <button onclick="openEventModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            <span>Add New Program</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-4 items-center justify-between">
+                            <div class="relative w-full sm:w-72">
+                                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-slate-600"></i>
+                                <input type="text" id="event-search" oninput="renderEventsList()" placeholder="Search programs..." class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            </div>
+                            <div class="flex gap-2 w-full sm:w-auto">
+                                <select id="event-filter-type" onchange="renderEventsList()" class="px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-600 focus:outline-none">
+                                    <option value="">All Types</option>
+                                    <option value="Single">Single</option>
+                                    <option value="Group">Group</option>
+                                </select>
+                                <select id="event-filter-cat" onchange="renderEventsList()" class="px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-600 focus:outline-none">
+                                    <option value="">All Categories</option>
+                                    <option value="Junior">Junior</option>
+                                    <option value="Senior">Senior</option>
+                                    <option value="General">General</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-600 border-b border-slate-100">
+                                    <tr>
+                                        <th class="px-6 py-4">Code / Name</th>
+                                        <th class="px-6 py-4">Category</th>
+                                        <th class="px-6 py-4">Type</th>
+                                        <th class="px-6 py-4">Points (1st/2nd/3rd)</th>
+                                        <th class="px-6 py-4">Max Participants</th>
+                                        <th class="px-6 py-4 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="events-tbody" class="divide-y divide-slate-100 text-slate-700 font-medium">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. REGISTRATION PORTAL TAB -->
+                <div id="tab-registrations" class="tab-content space-y-6 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900">Participant Registration Portal</h2>
+                            <p class="text-slate-500 text-sm">Register participants, assign teams, and auto-generate unique Chest Numbers.</p>
+                        </div>
+                        <button onclick="openRegistrationModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow transition flex items-center gap-2">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i>
+                            <span>Register Participant</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-4 items-center justify-between">
+                            <div class="relative w-full sm:w-72">
+                                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3 text-slate-600"></i>
+                                <input type="text" id="reg-search" oninput="renderRegistrationsList()" placeholder="Search name or chest no..." class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            </div>
+                            <div class="flex gap-2 w-full sm:w-auto">
+                                <select id="reg-filter-team" onchange="renderRegistrationsList()" class="px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-600 focus:outline-none">
+                                    <option value="">All Teams</option>
+                                </select>
+                                <select id="reg-filter-event" onchange="renderRegistrationsList()" class="px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium text-slate-600 focus:outline-none">
+                                    <option value="">All Programs</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-600 border-b border-slate-100">
+                                    <tr>
+                                        <th class="px-6 py-4">Chest No.</th>
+                                        <th class="px-6 py-4">Participant Name</th>
+                                        <th class="px-6 py-4">Team</th>
+                                        <th class="px-6 py-4">Program</th>
+                                        <th class="px-6 py-4">Category</th>
+                                        <th class="px-6 py-4 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="registrations-tbody" class="divide-y divide-slate-100 text-slate-700 font-medium">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. CHEST NUMBER MANAGER TAB -->
+                <div id="tab-chest-numbers" class="tab-content space-y-6 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900">Chest Number Manager</h2>
+                            <p class="text-slate-500 text-sm">View and print allocated chest numbers for participants.</p>
+                        </div>
+                        <button onclick="window.print()" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold px-4 py-2.5 rounded-xl shadow-sm transition flex items-center gap-2 no-print">
+                            <i data-lucide="printer" class="w-4 h-4"></i>
+                            <span>Print Chest Cards</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4" id="chest-cards-grid">
+                        <!-- Dynamic chest cards -->
+                    </div>
+                </div>
+
+                <!-- 6. MARKS & RESULTS ENTRY TAB -->
+                <div id="tab-results" class="tab-content space-y-6 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900">Marks & Results Entry</h2>
+                            <p class="text-slate-500 text-sm">Select a program, record rankings (1st, 2nd, 3rd) and distribute points automatically.</p>
+                        </div>
+                        <div class="w-full sm:w-72">
+                            <select id="result-event-select" onchange="loadEventResultForm()" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-white shadow-sm focus:outline-none">
+                                <option value="">-- Choose Program to Score --</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div id="result-form-container" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <div class="text-center py-12 text-slate-400">
+                            <i data-lucide="award" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                            <p class="text-sm font-medium">Please select a program from the dropdown above to enter rankings.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. POINTS TABLE TAB -->
+                <div id="tab-scoreboard" class="tab-content space-y-6 hidden">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-900">Overall Points Table</h2>
+                            <p class="text-slate-500 text-sm">Live point tallies calculated across all finished festival events.</p>
+                        </div>
+                        <button onclick="window.print()" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-semibold px-4 py-2.5 rounded-xl shadow-sm transition flex items-center gap-2 no-print">
+                            <i data-lucide="printer" class="w-4 h-4"></i>
+                            <span>Print Scoreboard</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-slate-50 text-xs uppercase font-semibold text-slate-600 border-b border-slate-100">
+                                    <tr>
+                                        <th class="px-6 py-4">Rank</th>
+                                        <th class="px-6 py-4">Team / House</th>
+                                        <th class="px-6 py-4">1st Prizes</th>
+                                        <th class="px-6 py-4">2nd Prizes</th>
+                                        <th class="px-6 py-4">3rd Prizes</th>
+                                        <th class="px-6 py-4 text-right">Total Points</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="scoreboard-tbody" class="divide-y divide-slate-100 font-medium text-slate-700">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. PUBLIC / TEAM PORTAL TAB -->
+                <div id="tab-public-portal" class="tab-content space-y-6 hidden">
+                    <div class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 text-white rounded-3xl p-8 shadow-xl relative overflow-hidden">
+                        <div class="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="relative z-10 max-w-2xl">
+                            <span class="inline-block bg-indigo-500/30 text-indigo-200 text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-wider">Live Public Portal</span>
+                            <h2 class="text-3xl font-extrabold tracking-tight" id="public-fest-title">FestMaster Live</h2>
+                            <p class="text-indigo-200 text-sm mt-2">Welcome to the live festival portal! Check live house points, upcoming event schedules, and published program results instantly from any device.</p>
+                        </div>
+                    </div>
+
+                    <!-- Live Public Leaderboard -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:col-span-1">
+                            <h3 class="font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
+                                <i data-lucide="trophy" class="w-5 h-5 text-amber-500"></i>
+                                <span>House Standings</span>
+                            </h3>
+                            <div id="public-standings-list" class="space-y-3">
+                                <!-- Dynamic public standings -->
+                            </div>
+                        </div>
+
+                        <!-- Published Results Stream -->
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 lg:col-span-2">
+                            <h3 class="font-bold text-slate-900 text-base mb-4 flex items-center gap-2">
+                                <i data-lucide="award" class="w-5 h-5 text-indigo-600"></i>
+                                <span>Recent Published Results</span>
+                            </h3>
+                            <div id="public-results-stream" class="space-y-4">
+                                <!-- Dynamic published results -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+    </div>
+
+    <!-- Team Modal -->
+    <div id="team-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-100">
+            <h3 class="text-lg font-bold text-slate-900 mb-4" id="team-modal-title">Add New Team</h3>
+            <form id="team-form" onsubmit="handleTeamSubmit(event)" class="space-y-4">
+                <input type="hidden" id="team-id">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Team / House Name</label>
+                    <input type="text" id="team-name" required placeholder="e.g. Phoenix / Alpha" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Theme Color</label>
+                    <div class="flex gap-3 mt-1">
+                        <input type="color" id="team-color" value="#4f46e5" class="w-12 h-10 rounded-xl border border-slate-200 cursor-pointer p-1 bg-white">
+                        <input type="text" id="team-color-text" value="#4f46e5" readonly class="flex-1 px-4 py-2 rounded-xl border border-slate-200 text-xs bg-slate-50 font-mono">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeTeamModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow transition">Save Team</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Event Modal -->
+    <div id="event-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 border border-slate-100 max-h-[90vh] overflow-y-auto">
+            <h3 class="text-lg font-bold text-slate-900 mb-4" id="event-modal-title">Add Program</h3>
+            <form id="event-form" onsubmit="handleEventSubmit(event)" class="space-y-4">
+                <input type="hidden" id="event-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Program Code</label>
+                        <input type="text" id="event-code" required placeholder="e.g. A01" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none uppercase">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Program Name</label>
+                        <input type="text" id="event-name" required placeholder="e.g. Light Music" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Category</label>
+                        <select id="event-category" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 focus:outline-none bg-white">
+                            <option value="Junior">Junior</option>
+                            <option value="Senior">Senior</option>
+                            <option value="General">General</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Participation Type</label>
+                        <select id="event-type" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 focus:outline-none bg-white">
+                            <option value="Single">Single</option>
+                            <option value="Group">Group</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">1st Point</label>
+                        <input type="number" id="event-p1" required value="5" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">2nd Point</label>
+                        <input type="number" id="event-p2" required value="3" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">3rd Point</label>
+                        <input type="number" id="event-p3" required value="1" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Max Participants per Team</label>
+                    <input type="number" id="event-max-p" required value="2" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs">
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeEventModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow transition">Save Program</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Registration Modal -->
+    <div id="reg-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-100">
+            <h3 class="text-lg font-bold text-slate-900 mb-4">Register Participant</h3>
+            <form id="reg-form" onsubmit="handleRegistrationSubmit(event)" class="space-y-4">
+                <input type="hidden" id="reg-id">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Participant Full Name</label>
+                    <input type="text" id="reg-name" required placeholder="e.g. Muhammed Shibili" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Assign Team</label>
+                        <select id="reg-team" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 focus:outline-none bg-white">
+                            <!-- Teams options -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Chest Number</label>
+                        <input type="text" id="reg-chest" required placeholder="Auto or Custom" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none font-mono font-bold">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-1">Select Program / Event</label>
+                    <select id="reg-event" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 focus:outline-none bg-white">
+                        <!-- Events options -->
+                    </select>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeRegistrationModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow transition">Complete Registration</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 border border-slate-100 space-y-4">
+            <h3 class="text-lg font-bold text-slate-900">Fest Settings & Data Backup</h3>
+            <p class="text-xs text-slate-500">You can export your database as JSON or backup/restore at any time. Data persists automatically in browser storage.</p>
+            <div class="space-y-3 pt-2">
+                <button onclick="exportDataJSON()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span>Export Fest Database (JSON)</span>
+                </button>
+                <label class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold py-3 px-4 rounded-xl transition flex items-center justify-center gap-2 cursor-pointer">
+                    <i data-lucide="upload" class="w-4 h-4"></i>
+                    <span>Import Fest Database</span>
+                    <input type="file" id="import-file" accept=".json" onchange="importDataJSON(event)" class="hidden">
+                </label>
+            </div>
+            <div class="flex justify-end pt-4">
+                <button onclick="closeSettingsModal()" class="px-5 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Application State Management ---
+        let appState = {
+            fest: null, // { name, organizer, date }
+            teams: [],  // [{ id, name, color }]
+            events: [], // [{ id, code, name, category, type, p1, p2, p3, maxP }]
+            registrations: [], // [{ id, name, teamId, eventId, chestNo }]
+            results: {} // eventId: { first: regId, second: regId, third: regId }
+        };
+
+        const STORAGE_KEY = 'festmaster_app_state_v2';
+
+        // Load state from localStorage on startup
+        function loadState() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                try {
+                    appState = JSON.parse(saved);
+                } catch (e) {
+                    console.error("Failed to parse saved state", e);
+                }
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+        }
+
+        // Initialize Lucide icons
+        function refreshIcons() {
+            lucide.createIcons();
+        }
+
+        // Window Onload Initialization
+        window.onload = function() {
+            loadState();
+            if (!appState.fest || !appState.fest.name) {
+                document.getElementById('setup-view').classList.remove('hidden');
+            } else {
+                initApp();
+            }
+
+            // Setup form event for fest creation
+            document.getElementById('fest-setup-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('setup-name').value;
+                const organizer = document.getElementById('setup-organizer').value;
+                const date = document.getElementById('setup-date').value;
+
+                appState.fest = { name, organizer, date };
+                
+                // Add demo data if empty
+                if (appState.teams.length === 0) {
+                    appState.teams = [
+                        { id: 't1', name: 'Phoenix', color: '#dc2626' },
+                        { id: 't2', name: 'Titans', color: '#2563eb' },
+                        { id: 't3', name: 'Spartans', color: '#16a34a' }
+                    ];
+                }
+                if (appState.events.length === 0) {
+                    appState.events = [
+                        { id: 'e1', code: 'A01', name: 'Light Music', category: 'General', type: 'Single', p1: 5, p2: 3, p3: 1, maxP: 2 },
+                        { id: 'e2', code: 'A02', name: 'Group Dance', category: 'General', type: 'Group', p1: 10, p2: 6, p3: 3, maxP: 1 }
+                    ];
+                }
+
+                saveState();
+                document.getElementById('setup-view').classList.add('hidden');
+                initApp();
+            });
+        };
+
+        function initApp() {
+            document.getElementById('header-fest-name').innerText = appState.fest.name;
+            document.getElementById('header-organizer').innerText = 'Organizer: ' + appState.fest.organizer;
+            document.getElementById('public-fest-title').innerText = appState.fest.name + ' Live';
+            document.getElementById('fest-initials').innerText = appState.fest.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+
+            switchTab('dashboard');
+            refreshAllViews();
+        }
+
+        // Tab Navigation Switcher
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-indigo-600', 'bg-indigo-50/50');
+                btn.classList.add('text-slate-600', 'hover:bg-slate-50');
+            });
+
+            const targetTab = document.getElementById('tab-' + tabId);
+            if (targetTab) targetTab.classList.remove('hidden');
+
+            const targetBtn = document.querySelector(`[data-tab="${tabId}"]`);
+            if (targetBtn) {
+                targetBtn.classList.remove('text-slate-600', 'hover:bg-slate-50');
+                targetBtn.classList.add('text-indigo-600', 'bg-indigo-50/50');
+            }
+
+            refreshAllViews();
+            refreshIcons();
+        }
+
+        function refreshAllViews() {
+            renderDashboard();
+            renderTeamsList();
+            renderEventsList();
+            renderRegistrationsList();
+            renderChestCards();
+            renderResultsDropdown();
+            renderScoreboard();
+            renderPublicPortal();
+        }
+
+        // --- 1. Dashboard Renderer ---
+        function renderDashboard() {
+            document.getElementById('stat-teams').innerText = appState.teams.length;
+            document.getElementById('stat-participants').innerText = appState.registrations.length;
+            document.getElementById('stat-events').innerText = appState.events.length;
+            document.getElementById('stat-results').innerText = Object.keys(appState.results).length;
+
+            // Events Table in Dashboard
+            const tbody = document.getElementById('dashboard-events-tbody');
+            tbody.innerHTML = '';
+            appState.events.slice(0, 5).forEach(ev => {
+                const hasResult = appState.results[ev.id] ? '<span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-xs font-semibold">Completed</span>' : '<span class="px-2.5 py-1 bg-amber-50 text-amber-700 rounded-lg text-xs font-semibold">Pending</span>';
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-4 py-3 font-semibold text-slate-900">${ev.name} <span class="text-xs text-slate-600 font-normal">(${ev.code})</span></td>
+                        <td class="px-4 py-3 text-slate-600">${ev.category}</td>
+                        <td class="px-4 py-3 text-slate-600">${ev.type}</td>
+                        <td class="px-4 py-3">${hasResult}</td>
+                    </tr>
+                `;
+            });
+
+            // Leader Card
+            const scores = calculateTeamScores();
+            const leaderCard = document.getElementById('dashboard-leader-card');
+            if (scores.length > 0 && scores[0].total > 0) {
+                const leader = scores[0];
+                leaderCard.innerHTML = `
+                    <div class="inline-flex w-14 h-14 rounded-2xl items-center justify-center text-white font-bold text-xl shadow-lg mb-3" style="background-color: ${leader.color}">
+                        ${leader.name.substring(0, 2).toUpperCase()}
+                    </div>
+                    <h4 class="text-xl font-extrabold text-slate-900">${leader.name}</h4>
+                    <p class="text-2xl font-black text-indigo-600 mt-1">${leader.total} <span class="text-xs font-semibold text-slate-600 uppercase">Points</span></p>
+                `;
+            } else {
+                leaderCard.innerHTML = `<p class="text-slate-600 text-sm">No points recorded yet.</p>`;
+            }
+        }
+
+        // --- 2. Team Management ---
+        function openTeamModal(teamId = null) {
+            document.getElementById('team-modal').classList.remove('hidden');
+            if (teamId) {
+                const team = appState.teams.find(t => t.id === teamId);
+                document.getElementById('team-modal-title').innerText = 'Edit Team';
+                document.getElementById('team-id').value = team.id;
+                document.getElementById('team-name').value = team.name;
+                document.getElementById('team-color').value = team.color;
+                document.getElementById('team-color-text').value = team.color;
+            } else {
+                document.getElementById('team-modal-title').innerText = 'Add New Team';
+                document.getElementById('team-id').value = '';
+                document.getElementById('team-name').value = '';
+                document.getElementById('team-color').value = '#4f46e5';
+                document.getElementById('team-color-text').value = '#4f46e5';
+            }
+        }
+        function closeTeamModal() { document.getElementById('team-modal').classList.add('hidden'); }
+
+        document.getElementById('team-color').addEventListener('input', (e) => {
+            document.getElementById('team-color-text').value = e.target.value;
+        });
+
+        function handleTeamSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('team-id').value;
+            const name = document.getElementById('team-name').value;
+            const color = document.getElementById('team-color').value;
+
+            if (id) {
+                const t = appState.teams.find(item => item.id === id);
+                if (t) { t.name = name; t.color = color; }
+            } else {
+                const newId = 't_' + Date.now();
+                appState.teams.push({ id: newId, name, color });
+            }
+
+            saveState();
+            closeTeamModal();
+            refreshAllViews();
+        }
+
+        function deleteTeam(id) {
+            if (confirm('Are you sure you want to delete this team?')) {
+                appState.teams = appState.teams.filter(t => t.id !== id);
+                saveState();
+                refreshAllViews();
+            }
+        }
+
+        function renderTeamsList() {
+            const grid = document.getElementById('teams-grid');
+            grid.innerHTML = '';
+            appState.teams.forEach(team => {
+                const participantCount = appState.registrations.filter(r => r.teamId === team.id).length;
+                grid.innerHTML += `
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-0 left-0 right-0 h-1.5" style="background-color: ${team.color}"></div>
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-10 h-10 rounded-xl text-white font-bold flex items-center justify-center shadow" style="background-color: ${team.color}">
+                                    ${team.name.substring(0, 2).toUpperCase()}
+                                </div>
+                                <div class="flex gap-1">
+                                    <button onclick="openTeamModal('${team.id}')" class="p-2 text-slate-400 hover:text-indigo-600 transition"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                                    <button onclick="deleteTeam('${team.id}')" class="p-2 text-slate-400 hover:text-rose-600 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </div>
+                            </div>
+                            <h3 class="font-bold text-slate-900 text-lg">${team.name}</h3>
+                            <p class="text-xs text-slate-500 mt-1">${participantCount} Registered Participants</p>
+                        </div>
+                    </div>
+                `;
+            });
+            refreshIcons();
+        }
+
+        // --- 3. Program & Event Management ---
+        function openEventModal(eventId = null) {
+            document.getElementById('event-modal').classList.remove('hidden');
+            if (eventId) {
+                const ev = appState.events.find(e => e.id === eventId);
+                document.getElementById('event-modal-title').innerText = 'Edit Program';
+                document.getElementById('event-id').value = ev.id;
+                document.getElementById('event-code').value = ev.code;
+                document.getElementById('event-name').value = ev.name;
+                document.getElementById('event-category').value = ev.category;
+                document.getElementById('event-type').value = ev.type;
+                document.getElementById('event-p1').value = ev.p1;
+                document.getElementById('event-p2').value = ev.p2;
+                document.getElementById('event-p3').value = ev.p3;
+                document.getElementById('event-max-p').value = ev.maxP;
+            } else {
+                document.getElementById('event-modal-title').innerText = 'Add Program';
+                document.getElementById('event-id').value = '';
+                document.getElementById('event-code').value = 'A' + (appState.events.length + 1);
+                document.getElementById('event-name').value = '';
+                document.getElementById('event-category').value = 'Junior';
+                document.getElementById('event-type').value = 'Single';
+                document.getElementById('event-p1').value = 5;
+                document.getElementById('event-p2').value = 3;
+                document.getElementById('event-p3').value = 1;
+                document.getElementById('event-max-p').value = 2;
+            }
+        }
+        function closeEventModal() { document.getElementById('event-modal').classList.add('hidden'); }
+
+        function handleEventSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById('event-id').value;
+            const code = document.getElementById('event-code').value.toUpperCase();
+            const name = document.getElementById('event-name').value;
+            const category = document.getElementById('event-category').value;
+            const type = document.getElementById('event-type').value;
+            const p1 = parseInt(document.getElementById('event-p1').value);
+            const p2 = parseInt(document.getElementById('event-p2').value);
+            const p3 = parseInt(document.getElementById('event-p3').value);
+            const maxP = parseInt(document.getElementById('event-max-p').value);
+
+            if (id) {
+                const ev = appState.events.find(item => item.id === id);
+                if (ev) { Object.assign(ev, { code, name, category, type, p1, p2, p3, maxP }); }
+            } else {
+                const newId = 'e_' + Date.now();
+                appState.events.push({ id: newId, code, name, category, type, p1, p2, p3, maxP });
+            }
+
+            saveState();
+            closeEventModal();
+            refreshAllViews();
+        }
+
+        function deleteEvent(id) {
+            if (confirm('Delete this event?')) {
+                appState.events = appState.events.filter(e => e.id !== id);
+                saveState();
+                refreshAllViews();
+            }
+        }
+
+        function renderEventsList() {
+            const tbody = document.getElementById('events-tbody');
+            const search = document.getElementById('event-search').value.toLowerCase();
+            const filterType = document.getElementById('event-filter-type').value;
+            const filterCat = document.getElementById('event-filter-cat').value;
+
+            tbody.innerHTML = '';
+            const filtered = appState.events.filter(ev => {
+                const matchSearch = ev.name.toLowerCase().includes(search) || ev.code.toLowerCase().includes(search);
+                const matchType = !filterType || ev.type === filterType;
+                const matchCat = !filterCat || ev.category === filterCat;
+                return matchSearch && matchType && matchCat;
+            });
+
+            filtered.forEach(ev => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-6 py-4"><span class="font-bold text-slate-900">${ev.code}</span> - ${ev.name}</td>
+                        <td class="px-6 py-4">${ev.category}</td>
+                        <td class="px-6 py-4">${ev.type}</td>
+                        <td class="px-6 py-4"><span class="text-indigo-600 font-semibold">${ev.p1} / ${ev.p2} / ${ev.p3}</span></td>
+                        <td class="px-6 py-4">${ev.maxP}</td>
+                        <td class="px-6 py-4 text-right">
+                            <button onclick="openEventModal('${ev.id}')" class="p-1.5 text-slate-400 hover:text-indigo-600"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                            <button onclick="deleteEvent('${ev.id}')" class="p-1.5 text-slate-400 hover:text-rose-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            refreshIcons();
+        }
+
+        // --- 4. Registration Portal ---
+        function openRegistrationModal() {
+            document.getElementById('reg-modal').classList.remove('hidden');
+            
+            // Populate team dropdown
+            const teamSelect = document.getElementById('reg-team');
+            teamSelect.innerHTML = appState.teams.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+
+            // Populate event dropdown
+            const eventSelect = document.getElementById('reg-event');
+            eventSelect.innerHTML = appState.events.map(e => `<option value="${e.id}">${e.code} - ${e.name} (${e.category})</option>`).join('');
+
+            // Auto generate chest number
+            const nextChestNum = 101 + appState.registrations.length;
+            document.getElementById('reg-chest').value = 'C' + nextChestNum;
+            document.getElementById('reg-name').value = '';
+        }
+        function closeRegistrationModal() { document.getElementById('reg-modal').classList.add('hidden'); }
+
+        function handleRegistrationSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value;
+            const teamId = document.getElementById('reg-team').value;
+            const eventId = document.getElementById('reg-event').value;
+            const chestNo = document.getElementById('reg-chest').value;
+
+            const newId = 'r_' + Date.now();
+            appState.registrations.push({ id: newId, name, teamId, eventId, chestNo });
+
+            saveState();
+            closeRegistrationModal();
+            refreshAllViews();
+        }
+
+        function deleteRegistration(id) {
+            if (confirm('Cancel this registration?')) {
+                appState.registrations = appState.registrations.filter(r => r.id !== id);
+                saveState();
+                refreshAllViews();
+            }
+        }
+
+        function renderRegistrationsList() {
+            const tbody = document.getElementById('registrations-tbody');
+            const search = document.getElementById('reg-search').value.toLowerCase();
+            const filterTeam = document.getElementById('reg-filter-team');
+            const filterEvent = document.getElementById('reg-filter-event');
+
+            // Populate dropdown filters if empty
+            if (filterTeam.options.length <= 1) {
+                filterTeam.innerHTML = '<option value="">All Teams</option>' + appState.teams.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+            }
+            if (filterEvent.options.length <= 1) {
+                filterEvent.options.length = 1;
+                appState.events.forEach(e => filterEvent.innerHTML += `<option value="${e.id}">${e.name}</option>`);
+            }
+
+            const teamVal = filterTeam.value;
+            const eventVal = filterEvent.value;
+
+            tbody.innerHTML = '';
+            const filtered = appState.registrations.filter(reg => {
+                const team = appState.teams.find(t => t.id === reg.teamId);
+                const ev = appState.events.find(e => e.id === reg.eventId);
+                const teamName = team ? team.name.toLowerCase() : '';
+                const evName = ev ? ev.name.toLowerCase() : '';
+
+                const matchSearch = reg.name.toLowerCase().includes(search) || reg.chestNo.toLowerCase().includes(search) || teamName.includes(search) || evName.includes(search);
+                const matchTeam = !teamVal || reg.teamId === teamVal;
+                const matchEvent = !eventVal || reg.eventId === eventVal;
+
+                return matchSearch && matchTeam && matchEvent;
+            });
+
+            filtered.forEach(reg => {
+                const team = appState.teams.find(t => t.id === reg.teamId);
+                const ev = appState.events.find(e => e.id === reg.eventId);
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-6 py-4 font-mono font-bold text-indigo-600">${reg.chestNo}</td>
+                        <td class="px-6 py-4 font-semibold text-slate-900">${reg.name}</td>
+                        <td class="px-6 py-4"><span class="px-2.5 py-1 rounded-lg text-xs font-semibold" style="background-color: ${team ? team.color + '20' : '#eee'}; color: ${team ? team.color : '#333'}">${team ? team.name : 'Unknown'}</span></td>
+                        <td class="px-6 py-4">${ev ? ev.name : 'Unknown'}</td>
+                        <td class="px-6 py-4 text-slate-500">${ev ? ev.category : '-'}</td>
+                        <td class="px-6 py-4 text-right">
+                            <button onclick="deleteRegistration('${reg.id}')" class="p-1.5 text-slate-400 hover:text-rose-600"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            refreshIcons();
+        }
+
+        // --- 5. Chest Number Manager Cards ---
+        function renderChestCards() {
+            const grid = document.getElementById('chest-cards-grid');
+            grid.innerHTML = '';
+            appState.registrations.forEach(reg => {
+                const team = appState.teams.find(t => t.id === reg.teamId);
+                const ev = appState.events.find(e => e.id === reg.eventId);
+                grid.innerHTML += `
+                    <div class="bg-white rounded-2xl border-2 border-dashed border-slate-200 p-5 flex flex-col justify-between shadow-sm relative overflow-hidden">
+                        <div class="absolute top-0 right-0 px-3 py-1 bg-slate-100 rounded-bl-xl text-[10px] font-bold text-slate-600 uppercase">${ev ? ev.category : ''}</div>
+                        <div>
+                            <span class="text-xs font-semibold text-indigo-600 uppercase">${appState.fest.name}</span>
+                            <div class="text-3xl font-black font-mono text-slate-900 mt-1">${reg.chestNo}</div>
+                            <h4 class="font-bold text-slate-800 text-base mt-2">${reg.name}</h4>
+                            <p class="text-xs font-semibold mt-1" style="color: ${team ? team.color : '#555'}">${team ? team.name : ''}</p>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                            <span>Program: ${ev ? ev.name : ''}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- 6. Marks & Results Entry ---
+        function renderResultsDropdown() {
+            const select = document.getElementById('result-event-select');
+            const currentVal = select.value;
+            select.innerHTML = '<option value="">-- Choose Program to Score --</option>' + appState.events.map(e => `<option value="${e.id}">${e.code} - ${e.name} (${e.category})</option>`).join('');
+            if (currentVal) select.value = currentVal;
+        }
+
+        function loadEventResultForm() {
+            const eventId = document.getElementById('result-event-select').value;
+            const container = document.getElementById('result-form-container');
+            if (!eventId) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-slate-400">
+                        <i data-lucide="award" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                        <p class="text-sm font-medium">Please select a program from the dropdown above to enter rankings.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const ev = appState.events.find(e => e.id === eventId);
+            const participants = appState.registrations.filter(r => r.eventId === eventId);
+            const currentResult = appState.results[eventId] || { first: '', second: '', third: '' };
+
+            if (participants.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-rose-500 font-medium">No participants registered for this program yet!</div>`;
+                return;
+            }
+
+            const optionsHtml = '<option value="">-- Select Participant --</option>' + participants.map(p => {
+                const team = appState.teams.find(t => t.id === p.teamId);
+                return `<option value="${p.id}">${p.chestNo} - ${p.name} (${team ? team.name : ''})</option>`;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="mb-6 pb-4 border-b border-slate-100 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900">${ev.name} <span class="text-xs font-semibold text-slate-600">(${ev.code})</span></h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Points: 1st (${ev.p1} pts) | 2nd (${ev.p2} pts) | 3rd (${ev.p3} pts)</p>
+                    </div>
+                </div>
+                <form onsubmit="handleResultSubmit(event, '${eventId}')" class="space-y-4 max-w-lg">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-amber-600 mb-1">🥇 First Prize (${ev.p1} pts)</label>
+                        <select id="res-first" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-white shadow-sm focus:outline-none">
+                            ${optionsHtml}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">🥈 Second Prize (${ev.p2} pts)</label>
+                        <select id="res-second" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-white shadow-sm focus:outline-none">
+                            ${optionsHtml}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-amber-700 mb-1">🥉 Third Prize (${ev.p3} pts)</label>
+                        <select id="res-third" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-800 bg-white shadow-sm focus:outline-none">
+                            ${optionsHtml}
+                        </select>
+                    </div>
+                    <button type="submit" class="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs px-6 py-3 rounded-xl shadow transition">Save & Publish Result</button>
+                </form>
+            `;
+
+            // Set current values if exist
+            if (currentResult.first) document.getElementById('res-first').value = currentResult.first;
+            if (currentResult.second) document.getElementById('res-second').value = currentResult.second;
+            if (currentResult.third) document.getElementById('res-third').value = currentResult.third;
+            refreshIcons();
+        }
+
+        function handleResultSubmit(e, eventId) {
+            e.preventDefault();
+            const first = document.getElementById('res-first').value;
+            const second = document.getElementById('res-second').value;
+            const third = document.getElementById('res-third').value;
+
+            if (first === second || first === third || second === third) {
+                alert('Participants cannot be assigned multiple positions in the same program!');
+                return;
+            }
+
+            appState.results[eventId] = { first, second, third };
+            saveState();
+            alert('Results successfully saved and points distributed to teams!');
+            refreshAllViews();
+        }
+
+        // --- 7. Scoring & Points Table Calculation ---
+        function calculateTeamScores() {
+            let teamScores = {};
+            appState.teams.forEach(t => {
+                teamScores[t.id] = { id: t.id, name: t.name, color: t.color, p1: 0, p2: 0, p3: 0, total: 0 };
+            });
+
+            Object.keys(appState.results).forEach(eventId => {
+                const res = appState.results[eventId];
+                const ev = appState.events.find(e => e.id === eventId);
+                if (!ev) return;
+
+                ['first', 'second', 'third'].forEach((pos, idx) => {
+                    const regId = res[pos];
+                    if (!regId) return;
+                    const reg = appState.registrations.find(r => r.id === regId);
+                    if (!reg || !teamScores[reg.teamId]) return;
+
+                    const pts = idx === 0 ? ev.p1 : (idx === 1 ? ev.p2 : ev.p3);
+                    if (idx === 0) teamScores[reg.teamId].p1++;
+                    if (idx === 1) teamScores[reg.teamId].p2++;
+                    if (idx === 2) teamScores[reg.teamId].p3++;
+                    teamScores[reg.teamId].total += pts;
+                });
+            });
+
+            return Object.values(teamScores).sort((a, b) => b.total - a.total);
+        }
+
+        function renderScoreboard() {
+            const tbody = document.getElementById('scoreboard-tbody');
+            const scores = calculateTeamScores();
+            tbody.innerHTML = '';
+
+            scores.forEach((ts, index) => {
+                const rank = index + 1;
+                const badge = rank === 1 ? '🥇' : (rank === 2 ? '🥈' : (rank === 3 ? '🥉' : rank));
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50">
+                        <td class="px-6 py-4 font-bold text-slate-800">${badge}</td>
+                        <td class="px-6 py-4 font-semibold text-slate-900 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full inline-block" style="background-color: ${ts.color}"></span>
+                            ${ts.name}
+                        </td>
+                        <td class="px-6 py-4 text-slate-600">${ts.p1}</td>
+                        <td class="px-6 py-4 text-slate-600">${ts.p2}</td>
+                        <td class="px-6 py-4 text-slate-600">${ts.p3}</td>
+                        <td class="px-6 py-4 text-right font-black text-indigo-600 text-base">${ts.total}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // --- 8. Public / Team Portal Renderer ---
+        function renderPublicPortal() {
+            const standingsContainer = document.getElementById('public-standings-list');
+            const scores = calculateTeamScores();
+            standingsContainer.innerHTML = '';
+
+            scores.forEach((ts, index) => {
+                const rank = index + 1;
+                standingsContainer.innerHTML += `
+                    <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
+                        <div class="flex items-center gap-3">
+                            <span class="font-bold text-sm text-slate-500 w-5">#${rank}</span>
+                            <span class="w-3 h-3 rounded-full" style="background-color: ${ts.color}"></span>
+                            <span class="font-bold text-sm text-slate-800">${ts.name}</span>
+                        </div>
+                        <span class="font-extrabold text-indigo-600 text-sm">${ts.total} pts</span>
+                    </div>
+                `;
+            });
+
+            // Results Stream
+            const streamContainer = document.getElementById('public-results-stream');
+            streamContainer.innerHTML = '';
+
+            const completedEvents = Object.keys(appState.results);
+            if (completedEvents.length === 0) {
+                streamContainer.innerHTML = `<p class="text-xs text-slate-500">No published results yet. Check back soon!</p>`;
+                return;
+            }
+
+            completedEvents.forEach(eventId => {
+                const ev = appState.events.find(e => e.id === eventId);
+                const res = appState.results[eventId];
+                if (!ev) return;
+
+                const getWinnerInfo = (regId) => {
+                    if (!regId) return 'Not Awarded';
+                    const reg = appState.registrations.find(r => r.id === regId);
+                    const team = reg ? appState.teams.find(t => t.id === reg.teamId) : null;
+                    return reg ? `${reg.name} (${team ? team.name : ''})` : '';
+                };
+
+                streamContainer.innerHTML += `
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <h4 class="font-bold text-slate-900 text-sm">${ev.name} <span class="text-xs text-slate-600 font-normal">(${ev.category})</span></h4>
+                            <span class="text-[10px] font-bold px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg">Published</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs pt-1">
+                            <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+                                <span class="text-amber-600 font-semibold block text-[10px] uppercase">🥇 1st Place</span>
+                                <span class="font-bold text-slate-800 truncate block mt-0.5">${getWinnerInfo(res.first)}</span>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+                                <span class="text-slate-600 font-semibold block text-[10px] uppercase">🥈 2nd Place</span>
+                                <span class="font-bold text-slate-800 truncate block mt-0.5">${getWinnerInfo(res.second)}</span>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-xl border border-slate-200">
+                                <span class="text-amber-700 font-semibold block text-[10px] uppercase">🥉 3rd Place</span>
+                                <span class="font-bold text-slate-800 truncate block mt-0.5">${getWinnerInfo(res.third)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- Settings & Data Backup / Reset ---
+        function openSettingsModal() { document.getElementById('settings-modal').classList.remove('hidden'); }
+        function closeSettingsModal() { document.getElementById('settings-modal').classList.add('hidden'); }
+
+        function exportDataJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", (appState.fest.name || 'fest') + '_backup.json');
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importDataJSON(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const parsed = JSON.parse(evt.target.result);
+                    if (parsed.fest && parsed.teams && parsed.events) {
+                        appState = parsed;
+                        saveState();
+                        alert('Fest database successfully imported!');
+                        closeSettingsModal();
+                        initApp();
+                    } else {
+                        alert('Invalid backup file format.');
+                    }
+                } catch (err) {
+                    alert('Error reading JSON file.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetFestData() {
+            if (confirm('Are you sure you want to reset and clear all fest data? This cannot be undone.')) {
+                localStorage.removeItem(STORAGE_KEY);
+                location.reload();
+            }
+      shtlsav12@26  }
+    </script>
+</body>
+</html>
