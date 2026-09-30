@@ -1,358 +1,430 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FestMaster Pro - Complete Fest Management System</title>
-    <!-- Tailwind CSS for Professional Look -->
+    <!-- Google Fonts & Tailwind CSS for Pro Look -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+    </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans">
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col">
 
-    <!-- LOGIN SECTION -->
-    <div id="login-section" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 p-4">
-        <div class="bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md border border-white/20 text-white">
-            <div class="text-center mb-8">
-                <i class="fa-solid fa-trophy text-5xl text-amber-400 mb-3"></i>
-                <h1 class="text-3xl font-bold">FestMaster Pro</h1>
-                <p class="text-sm text-slate-300">Complete Arts & Sports Fest Management</p>
+    <!-- Navbar -->
+    <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 text-white p-2 rounded-xl font-bold text-xl"><i class="fa-solid fa-trophy"></i></div>
+                <div>
+                    <h1 class="font-bold text-lg tracking-wide">FestMaster Pro</h1>
+                    <p class="text-xs text-slate-400">Registration to Results Automation</p>
+                </div>
+            </div>
+            <div id="nav-auth-section" class="flex items-center space-x-3">
+                <button onclick="showLoginModal('admin')" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg text-sm font-medium transition"><i class="fa-solid fa-user-shield mr-2"></i>Admin Login</button>
+                <button onclick="showLoginModal('team')" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg text-sm font-medium transition"><i class="fa-solid fa-users mr-2"></i>Team Login</button>
+                <button onclick="switchTab('public')" class="bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-lg text-sm font-medium transition"><i class="fa-solid fa-globe mr-2"></i>Public Portal</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6">
+        
+        <!-- Public Portal View -->
+        <div id="view-public" class="space-y-6">
+            <div class="bg-gradient-to-r from-indigo-900 to-slate-800 p-8 rounded-2xl shadow-xl border border-slate-700 text-center">
+                <h2 class="text-3xl font-bold mb-2">Live Fest Scoreboard & Results</h2>
+                <p class="text-slate-300">చెక్ ചെയ്യൂ നിങ്ങളുടെ ഫെസ്റ്റിന്റെ തത്സമയ ഫലങ്ങളും പോയിന്റുകളും!</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="public-stats">
+                <!-- Dynamic Stats Cards -->
+            </div>
+            <div class="bg-slate-800 rounded-2xl p-6 border border-slate-700 shadow-lg">
+                <h3 class="text-xl font-bold mb-4"><i class="fa-solid fa-medal text-amber-400 mr-2"></i>Leaderboard</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse" id="public-leaderboard-table">
+                        <thead>
+                            <tr class="border-b border-slate-700 text-slate-400 text-sm">
+                                <th class="py-3 px-4">Rank</th>
+                                <th class="py-3 px-4">Team Name</th>
+                                <th class="py-3 px-4">Code Letter</th>
+                                <th class="py-3 px-4">Total Points</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-700/50"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard View -->
+        <div id="view-admin" class="hidden space-y-6">
+            <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
+                <div class="flex items-center space-x-3">
+                    <span class="bg-indigo-500/20 text-indigo-400 px-3 py-1 rounded-full text-sm font-semibold">Admin Mode</span>
+                    <h2 class="text-xl font-bold">Fest Control Center</h2>
+                </div>
+                <button onclick="logout()" class="text-rose-400 hover:text-rose-300 text-sm font-medium"><i class="fa-solid fa-power-off mr-1"></i> Logout</button>
+            </div>
+
+            <!-- Admin Navigation Tabs -->
+            <div class="flex flex-wrap gap-2 border-b border-slate-700 pb-3">
+                <button onclick="adminTab('settings')" class="admin-tab-btn px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm font-medium transition">Settings & Chest No</button>
+                <button onclick="adminTab('teams')" class="admin-tab-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 text-sm font-medium transition">Team & Code Letter</button>
+                <button onclick="adminTab('registration')" class="admin-tab-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 text-sm font-medium transition">Participant Registration</button>
+                <button onclick="adminTab('judging')" class="admin-tab-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 text-sm font-medium transition">Judge Points Entry</button>
+                <button onclick="adminTab('poster')" class="admin-tab-btn px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 text-sm font-medium transition">Result Poster Generator</button>
+            </div>
+
+            <!-- Tab 1: Settings & Chest Number Config -->
+            <div id="admin-settings" class="admin-section space-y-6">
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 max-w-xl">
+                    <h3 class="text-lg font-bold mb-4">Chest Number Configuration</h3>
+                    <form onsave class="space-y-4" onsubmit="saveChestConfig(event)">
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-1">Chest Number Generation Mode</label>
+                            <select id="chest-mode" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm">
+                                <option value="auto">Auto Increment (101, 102, 103...)</option>
+                                <option value="manual">Manual Entry</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-1">Starting Number</label>
+                            <input type="number" id="chest-start" value="101" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm">
+                        </div>
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg text-sm font-medium">Save Configuration</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tab 2: Teams & Code Letters -->
+            <div id="admin-teams" class="admin-section hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                        <h3 class="text-lg font-bold mb-4">Add Team</h3>
+                        <form onsubmit="addTeam(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-sm text-slate-400 mb-1">Team Name</label>
+                                <input type="text" id="team-name" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm" placeholder="e.g. Al-Ameen House">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-slate-400 mb-1">Code Letter (e.g. A, B, C)</label>
+                                <input type="text" id="team-code" required maxlength="3" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm uppercase" placeholder="A">
+                            </div>
+                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg text-sm font-medium">Save Team</button>
+                        </form>
+                    </div>
+                    <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                        <h3 class="text-lg font-bold mb-4">Registered Teams</h3>
+                        <div id="teams-list" class="space-y-2 max-h-60 overflow-y-auto"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Participant Registration -->
+            <div id="admin-registration" class="admin-section hidden space-y-6">
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 max-w-2xl">
+                    <h3 class="text-lg font-bold mb-4">Register Participant / Item Entry</h3>
+                    <form onsubmit="registerParticipant(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm text-slate-400 mb-1">Participant Name</label>
+                                <input type="text" id="part-name" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-slate-400 mb-1">Chest Number</label>
+                                <input type="text" id="part-chest" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm" placeholder="Auto or Manual">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm text-slate-400 mb-1">Select Team</label>
+                                <select id="part-team" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm"></select>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-slate-400 mb-1">Item Name</label>
+                                <input type="text" id="part-item" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm" placeholder="Mappila Pattu">
+                            </div>
+                        </div>
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg text-sm font-medium">Complete Registration</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tab 4: Judge Points Entry -->
+            <div id="admin-judging" class="admin-section hidden space-y-6">
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 max-w-xl">
+                    <h3 class="text-lg font-bold mb-4">Add Judge Points & Results</h3>
+                    <form onsubmit="savePoints(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-1">Select Item</label>
+                            <input type="text" id="judge-item" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm" placeholder="Mappila Pattu">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-1">Winning Team</label>
+                            <select id="judge-team" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm"></select>
+                        </div>
+                        <div>
+                            <label class="block text-sm text-slate-400 mb-1">Position / Grade</label>
+                            <select id="judge-position" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm">
+                                <option value="1">1st Place (5 Points)</option>
+                                <option value="2">2nd Place (3 Points)</option>
+                                <option value="3">3rd Place (1 Point)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg text-sm font-medium">Publish Result & Add Points</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tab 5: Result Poster Generator -->
+            <div id="admin-poster" class="admin-section hidden space-y-6">
+                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 max-w-xl">
+                    <h3 class="text-lg font-bold mb-4">Visual Result Poster Maker</h3>
+                    <div id="poster-preview" class="bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 p-6 rounded-xl text-center border border-indigo-500 space-y-4 shadow-2xl">
+                        <h4 class="text-xs uppercase tracking-widest text-indigo-300 font-semibold">FestMaster Pro Official Result</h4>
+                        <h2 id="poster-item-title" class="text-2xl font-black text-amber-400">MAPPIILA PATTU</h2>
+                        <div class="py-4 bg-black/30 rounded-lg backdrop-blur">
+                            <p class="text-xs text-slate-300">WINNER</p>
+                            <p id="poster-team-name" class="text-xl font-bold text-white">Team Al-Ameen</p>
+                            <p id="poster-points" class="text-sm text-indigo-200 mt-1">1st Place • 5 Points</p>
+                        </div>
+                        <p class="text-[10px] text-slate-400">Powered by FestMaster Pro</p>
+                    </div>
+                    <button onclick="alert('Poster ready for screenshot/download!')" class="mt-4 bg-emerald-600 hover:bg-emerald-700 px-4 py-2 rounded-lg text-sm font-medium w-full">Download / Share Poster</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Dashboard View -->
+        <div id="view-team" class="hidden space-y-6">
+            <div class="flex justify-between items-center bg-slate-800 p-4 rounded-xl border border-slate-700">
+                <h2 id="team-welcome-title" class="text-xl font-bold">Team Portal</h2>
+                <button onclick="logout()" class="text-rose-400 text-sm font-medium">Logout</button>
+            </div>
+            <div class="bg-slate-800 p-6 rounded-xl border border-slate-700">
+                <h3 class="text-lg font-bold mb-4">Your Team's Participants</h3>
+                <div id="team-participants-list" class="space-y-2"></div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+        <div class="bg-slate-800 border border-slate-700 w-full max-w-md rounded-2xl p-6 shadow-2xl space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 id="modal-title" class="text-lg font-bold">Login</h3>
+                <button onclick="closeLoginModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <form onsubmit="handleLogin(event)" class="space-y-4">
+                <input type="hidden" id="login-type">
                 <div>
-                    <label class="block text-sm mb-1">Select Role</label>
-                    <select id="login-role" class="w-full p-3 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none">
-                        <option value="admin" class="text-slate-900">Admin</option>
-                        <option value="judge" class="text-slate-900">Judge</option>
-                        <option value="team" class="text-slate-900">Team Portal</option>
-                        <option value="public" class="text-slate-900">Public Portal</option>
-                    </select>
+                    <label class="block text-sm text-slate-400 mb-1">Username / Team Name</label>
+                    <input type="text" id="login-user" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm">
                 </div>
                 <div>
-                    <label class="block text-sm mb-1">Username</label>
-                    <input type="text" id="login-user" required class="w-full p-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-slate-400 focus:outline-none" placeholder="Enter username">
+                    <label class="block text-sm text-slate-400 mb-1">Password</label>
+                    <input type="password" id="login-pass" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm">
                 </div>
-                <div>
-                    <label class="block text-sm mb-1">Password</label>
-                    <input type="password" id="login-pass" required class="w-full p-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-slate-400 focus:outline-none" placeholder="Enter password">
-                </div>
-                <button type="submit" class="w-full py-3 bg-amber-500 hover:bg-amber-600 font-bold rounded-lg transition duration-200 shadow-lg">Login to Fest</button>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 py-2.5 rounded-lg text-sm font-medium">Login Now</button>
             </form>
-            <div class="mt-4 text-xs text-center text-slate-300">
-                <p>Default Admin: <b>admin</b> / <b>admin123</b></p>
-            </div>
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD -->
-    <div id="dashboard-section" class="hidden min-h-screen flex flex-col">
-        <!-- Navbar -->
-        <header class="bg-indigo-900 text-white shadow-md px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <i class="fa-solid fa-award text-2xl text-amber-400"></i>
-                <span class="text-xl font-bold tracking-wider">FestMaster Dashboard</span>
-            </div>
-            <div class="flex items-center space-x-4">
-                <span id="welcome-user" class="text-sm bg-indigo-800 px-3 py-1 rounded-full"></span>
-                <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm font-semibold transition"><i class="fa-solid fa-right-from-bracket mr-1"></i> Logout</button>
-            </div>
-        </header>
-
-        <!-- Content Body -->
-        <div class="flex flex-1 flex-col md:flex-row">
-            <!-- Sidebar -->
-            <aside class="w-full md:w-64 bg-slate-900 text-slate-300 p-4 space-y-2">
-                <button onclick="switchTab('reg')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 hover:text-white transition flex items-center space-x-3"><i class="fa-solid fa-user-plus w-5"></i><span>Registration & Chest No</span></button>
-                <button onclick="switchTab('teams')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 hover:text-white transition flex items-center space-x-3"><i class="fa-solid fa-users w-5"></i><span>Team Settings</span></button>
-                <button onclick="switchTab('codes')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 hover:text-white transition flex items-center space-x-3"><i class="fa-solid fa-barcode w-5"></i><span>Code Letter Assign</span></button>
-                <button onclick="switchTab('judging')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 hover:text-white transition flex items-center space-x-3"><i class="fa-solid fa-star w-5"></i><span>Judge & Point Entry</span></button>
-                <button onclick="switchTab('results')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 hover:text-white transition flex items-center space-x-3"><i class="fa-solid fa-chart-line w-5"></i><span>Live Results & Poster</span></button>
-            </aside>
-
-            <!-- Main Workspace -->
-            <main class="flex-1 p-6 overflow-y-auto">
-                
-                <!-- TAB 1: REGISTRATION & CHEST NUMBER -->
-                <div id="tab-reg" class="tab-content space-y-6">
-                    <h2 class="text-2xl font-bold text-slate-800">Participant Registration & Chest Numbers</h2>
-                    <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
-                        <form onsubmit="addParticipant(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium mb-1">Participant Name</label>
-                                <input type="text" id="p-name" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium mb-1">Team / House</label>
-                                <select id="p-team" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500">
-                                    <option value="Alpha">Alpha Team</option>
-                                    <option value="Beta">Beta Team</option>
-                                    <option value="Gamma">Gamma Team</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium mb-1">Chest Number (Custom)</label>
-                                <input type="text" id="p-chest" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="Ex: A101">
-                            </div>
-                            <div class="flex items-end">
-                                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition">Register Now</button>
-                            </div>
-                        </form>
-                    </div>
-
-                    <!-- Participants List Table -->
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200">
-                        <table class="w-full text-left border-collapse">
-                            <thead class="bg-slate-100 border-b">
-                                <tr>
-                                    <th class="p-4 font-semibold">Chest No</th>
-                                    <th class="p-4 font-semibold">Name</th>
-                                    <th class="p-4 font-semibold">Team</th>
-                                    <th class="p-4 font-semibold">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="participant-table-body">
-                                <!-- Dynamic rows -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- TAB 2: TEAM SETTINGS -->
-                <div id="tab-teams" class="tab-content hidden space-y-6">
-                    <h2 class="text-2xl font-bold text-slate-800">Team Portal & Settings</h2>
-                    <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
-                        <p class="text-sm text-slate-600 mb-4">Manage participating teams and house names here.</p>
-                        <div class="flex gap-4">
-                            <input type="text" id="new-team-name" placeholder="Enter Team Name" class="p-2.5 border rounded-lg flex-1">
-                            <button onclick="addTeam()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg font-semibold">Add Team</button>
-                        </div>
-                    </div>
-                    <div id="teams-list" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <!-- Team Cards -->
-                    </div>
-                </div>
-
-                <!-- TAB 3: CODE LETTER ASSIGN -->
-                <div id="tab-codes" class="tab-content hidden space-y-6">
-                    <h2 class="text-2xl font-bold text-slate-800">Code Letter Assignment</h2>
-                    <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
-                        <p class="text-sm text-slate-600 mb-4">Assign confidential code letters to participants for fair judging.</p>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
-                                <thead class="bg-slate-100 border-b">
-                                    <tr>
-                                        <th class="p-4">Chest No</th>
-                                        <th class="p-4">Name</th>
-                                        <th class="p-4">Assigned Code Letter</th>
-                                        <th class="p-4">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="code-table-body">
-                                    <!-- Dynamic rows -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TAB 4: JUDGE & POINT ENTRY -->
-                <div id="tab-judging" class="tab-content hidden space-y-6">
-                    <h2 class="text-2xl font-bold text-slate-800">Judge Point Entry</h2>
-                    <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
-                        <form onsubmit="savePoints(event)" class="space-y-4">
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium mb-1">Select Participant (Chest No)</label>
-                                    <select id="judge-participant" class="w-full p-2.5 border rounded-lg"></select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium mb-1">Event Name</label>
-                                    <input type="text" id="judge-event" required class="w-full p-2.5 border rounded-lg" placeholder="Ex: Light Music">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium mb-1">Points Awarded</label>
-                                    <input type="number" id="judge-points" required class="w-full p-2.5 border rounded-lg" placeholder="Ex: 10">
-                                </div>
-                            </div>
-                            <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-2.5 rounded-lg transition">Submit Points</button>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- TAB 5: LIVE RESULTS & POSTER -->
-                <div id="tab-results" class="tab-content hidden space-y-6">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-2xl font-bold text-slate-800">Live Results & Public Portal</h2>
-                        <button onclick="window.print()" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm"><i class="fa-solid fa-print mr-1"></i> Print Poster</button>
-                    </div>
-                    <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
-                        <h3 class="text-lg font-bold mb-4 text-indigo-900 border-b pb-2">Leaderboard & Standings</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
-                                <thead class="bg-indigo-50 border-b">
-                                    <tr>
-                                        <th class="p-4">Rank / Position</th>
-                                        <th class="p-4">Chest No</th>
-                                        <th class="p-4">Name</th>
-                                        <th class="p-4">Event</th>
-                                        <th class="p-4">Total Points</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="results-table-body">
-                                    <!-- Dynamic leaderboard -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-            </main>
-        </div>
-    </div>
-
-    <!-- JavaScript Logic with LocalStorage -->
+    <!-- JavaScript Logic (Data Persistence via LocalStorage) -->
     <script>
-        // Database simulation using localStorage
+        // State Management
         let db = JSON.parse(localStorage.getItem('fest_db')) || {
+            config: { mode: 'auto', start: 101 },
+            teams: [],
             participants: [],
-            teams: ['Alpha', 'Beta', 'Gamma'],
-            points: []
+            results: []
         };
 
         function saveData() {
             localStorage.setItem('fest_db', JSON.stringify(db));
+            initPublicPortal();
+        }
+
+        // Navigation Control
+        function switchTab(view) {
+            document.getElementById('view-public').classList.add('hidden');
+            document.getElementById('view-admin').classList.add('hidden');
+            document.getElementById('view-team').classList.add('hidden');
+            document.getElementById('view-' + view).classList.remove('hidden');
+        }
+
+        function adminTab(tabName) {
+            document.querySelectorAll('.admin-section').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.admin-tab-btn').forEach(el => {
+                el.classList.remove('bg-indigo-600', 'text-white');
+                el.classList.add('bg-slate-800', 'text-slate-300');
+            });
+            document.getElementById('admin-' + tabName).classList.remove('hidden');
+            event.currentTarget.classList.add('bg-indigo-600', 'text-white');
+            event.currentTarget.classList.remove('bg-slate-800', 'text-slate-300');
+        }
+
+        // Modals
+        function showLoginModal(type) {
+            document.getElementById('login-modal').classList.remove('hidden');
+            document.getElementById('login-type').value = type;
+            document.getElementById('modal-title').innerText = type === 'admin' ? 'Admin Login' : 'Team Portal Login';
+        }
+
+        function closeLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
         }
 
         function handleLogin(e) {
             e.preventDefault();
-            const role = document.getElementById('login-role').value;
+            const type = document.getElementById('login-type').value;
             const user = document.getElementById('login-user').value;
-            
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('dashboard-section').classList.remove('hidden');
-            document.getElementById('welcome-user').innerText = `${role.toUpperCase()}: ${user}`;
-            
-            renderAll();
+            const pass = document.getElementById('login-pass').value;
+
+            if(type === 'admin' && user === 'admin' && pass === 'admin123') {
+                closeLoginModal();
+                switchTab('admin');
+                renderAdminData();
+            } else if(type === 'team') {
+                const team = db.teams.find(t => t.name.toLowerCase() === user.toLowerCase());
+                if(team) {
+                    closeLoginModal();
+                    switchTab('team');
+                    document.getElementById('team-welcome-title').innerText = `Welcome, ${team.name} (Code: ${team.code})`;
+                    renderTeamPortal(team.name);
+                } else {
+                    alert('Invalid Team Name!');
+                }
+            } else {
+                alert('Invalid Credentials! (Default Admin: admin / admin123)');
+            }
         }
 
         function logout() {
-            document.getElementById('dashboard-section').classList.add('hidden');
-            document.getElementById('login-section').classList.remove('hidden');
+            switchTab('public');
         }
 
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-            renderAll();
-        }
-
-        // Add Participant
-        function addParticipant(e) {
+        // Chest Number Configuration
+        function saveChestConfig(e) {
             e.preventDefault();
-            const name = document.getElementById('p-name').value;
-            const team = document.getElementById('p-team').value;
-            const chest = document.getElementById('p-chest').value;
-
-            db.participants.push({ chest, name, team, code: 'C-' + Math.floor(Math.random() * 900 + 100) });
+            db.config.mode = document.getElementById('chest-mode').value;
+            db.config.start = parseInt(document.getElementById('chest-start').value);
             saveData();
-            renderAll();
+            alert('Chest Number configuration saved successfully!');
+        }
+
+        // Team Management
+        function addTeam(e) {
+            e.preventDefault();
+            const name = document.getElementById('team-name').value;
+            const code = document.getElementById('team-code').value.toUpperCase();
+            db.teams.push({ name, code, points: 0 });
+            saveData();
+            document.getElementById('team-name').value = '';
+            document.getElementById('team-code').value = '';
+            renderAdminData();
+        }
+
+        // Participant Registration
+        function registerParticipant(e) {
+            e.preventDefault();
+            const name = document.getElementById('part-name').value;
+            let chest = document.getElementById('part-chest').value;
+            const team = document.getElementById('part-team').value;
+            const item = document.getElementById('part-item').value;
+
+            if(!chest) {
+                if(db.config.mode === 'auto') {
+                    const count = db.participants.length;
+                    chest = db.config.start + count;
+                } else {
+                    chest = 'M-' + Math.floor(Math.random() * 1000);
+                }
+            }
+
+            db.participants.push({ name, chest, team, item });
+            saveData();
+            alert(`Participant registered successfully! Chest No: ${chest}`);
             e.target.reset();
         }
 
-        // Add Team
-        function addTeam() {
-            const teamName = document.getElementById('new-team-name').value;
-            if(teamName && !db.teams.includes(teamName)) {
-                db.teams.push(teamName);
-                saveData();
-                renderAll();
-                document.getElementById('new-team-name').value = '';
-            }
-        }
-
-        // Save Points
+        // Judge Points
         function savePoints(e) {
             e.preventDefault();
-            const chest = document.getElementById('judge-participant').value;
-            const eventName = document.getElementById('judge-event').value;
-            const points = parseInt(document.getElementById('judge-points').value);
+            const item = document.getElementById('judge-item').value;
+            const teamName = document.getElementById('judge-team').value;
+            const pos = parseInt(document.getElementById('judge-position').value);
+            const pts = pos === 1 ? 5 : (pos === 2 ? 3 : 1);
 
-            db.points.push({ chest, eventName, points });
+            const team = db.teams.find(t => t.name === teamName);
+            if(team) {
+                team.points = (team.points || 0) + pts;
+            }
+
+            db.results.push({ item, teamName, pos, pts });
             saveData();
-            alert('Points successfully added!');
-            renderAll();
+            
+            // Update Poster Preview
+            document.getElementById('poster-item-title').innerText = item.toUpperCase();
+            document.getElementById('poster-team-name').innerText = teamName;
+            document.getElementById('poster-points').innerText = `${pos === 1 ? '1st' : pos === 2 ? '2nd' : '3rd'} Place • ${pts} Points`;
+
+            alert('Points added and result published successfully!');
             e.target.reset();
         }
 
-        // Render Functions
-        function renderAll() {
-            // Render Participants Table
-            const pTable = document.getElementById('participant-table-body');
-            pTable.innerHTML = db.participants.map(p => `
-                <tr class="border-b hover:bg-slate-50">
-                    <td class="p-4 font-bold text-indigo-600">${p.chest}</td>
-                    <td class="p-4">${p.name}</td>
-                    <td class="p-4"><span class="bg-slate-200 px-2.5 py-1 rounded-full text-xs font-semibold">${p.team}</span></td>
-                    <td class="p-4"><button onclick="deleteParticipant('${p.chest}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
+        // Render Data Helpers
+        function renderAdminData() {
+            // Render Teams List
+            const teamListDiv = document.getElementById('teams-list');
+            teamListDiv.innerHTML = db.teams.map(t => `<div class="bg-slate-900 p-3 rounded-lg flex justify-between items-center text-sm"><span>${t.name}</span><span class="bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded font-mono">${t.code}</span></div>`).join('');
+
+            // Render Select Dropdowns
+            const teamSelects = [document.getElementById('part-team'), document.getElementById('judge-team')];
+            teamSelects.forEach(select => {
+                if(select) {
+                    select.innerHTML = db.teams.map(t => `<option value="${t.name}">${t.name} (${t.code})</option>`).join('');
+                }
+            });
+        }
+
+        function renderTeamPortal(teamName) {
+            const list = document.getElementById('team-participants-list');
+            const parts = db.participants.filter(p => p.team === teamName);
+            list.innerHTML = parts.length ? parts.map(p => `<div class="bg-slate-900 p-3 rounded-lg text-sm flex justify-between"><span>${p.name} (${p.item})</span><span class="text-indigo-400 font-mono">Chest: ${p.chest}</span></div>`).join('') : '<p class="text-sm text-slate-400">No participants registered yet.</p>';
+        }
+
+        function initPublicPortal() {
+            // Public Leaderboard
+            const tbody = document.querySelector('#public-leaderboard-table tbody');
+            const sortedTeams = [...db.teams].sort((a,b) => (b.points || 0) - (a.points || 0));
+            tbody.innerHTML = sortedTeams.map((t, idx) => `
+                <tr class="hover:bg-slate-700/30">
+                    <td class="py-3 px-4 font-bold text-indigo-400">#${idx + 1}</td>
+                    <td class="py-3 px-4 font-medium">${t.name}</td>
+                    <td class="py-3 px-4 font-mono text-slate-400">${t.code}</td>
+                    <td class="py-3 px-4 font-bold text-amber-400">${t.points || 0} pts</td>
                 </tr>
             `).join('');
 
-            // Render Team Dropdown & List
-            const teamSelect = document.getElementById('p-team');
-            teamSelect.innerHTML = db.teams.map(t => `<option value="${t}">${t} Team</option>`).join('');
-
-            const teamList = document.getElementById('teams-list');
-            teamList.innerHTML = db.teams.map(t => `
-                <div class="bg-white p-4 rounded-xl shadow border border-slate-200 flex justify-between items-center">
-                    <span class="font-bold text-lg text-indigo-900">${t}</span>
-                    <span class="text-sm bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg">Active Team</span>
-                </div>
-            `).join('');
-
-            // Render Codes Table
-            const codeTable = document.getElementById('code-table-body');
-            codeTable.innerHTML = db.participants.map(p => `
-                <tr class="border-b">
-                    <td class="p-4 font-bold">${p.chest}</td>
-                    <td class="p-4">${p.name}</td>
-                    <td class="p-4"><input type="text" value="${p.code}" onchange="updateCode('${p.chest}', this.value)" class="border p-1 rounded font-mono text-indigo-600 font-bold w-28"></td>
-                    <td class="p-4 text-sm text-green-600"><i class="fa-solid fa-check-circle"></i> Assigned</td>
-                </tr>
-            `).join('');
-
-            // Render Judge Participant Dropdown
-            const judgePartSelect = document.getElementById('judge-participant');
-            judgePartSelect.innerHTML = db.participants.map(p => `<option value="${p.chest}">${p.chest} - ${p.name}</option>`).join('');
-
-            // Render Results / Leaderboard
-            const resTable = document.getElementById('results-table-body');
-            resTable.innerHTML = db.points.map((pt, index) => {
-                const participant = db.participants.find(p => p.chest === pt.chest) || { name: 'Unknown' };
-                return `
-                    <tr class="border-b hover:bg-slate-50">
-                        <td class="p-4 font-bold">#${index + 1}</td>
-                        <td class="p-4 text-indigo-600 font-semibold">${pt.chest}</td>
-                        <td class="p-4">${participant.name}</td>
-                        <td class="p-4">${pt.eventName}</td>
-                        <td class="p-4 font-bold text-amber-600">${pt.points} Pts</td>
-                    </tr>
-                `;
-            }).join('');
+            // Stats
+            const stats = document.getElementById('public-stats');
+            stats.innerHTML = `
+                <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4"><div class="bg-indigo-600/20 text-indigo-400 p-3 rounded-xl text-xl"><i class="fa-solid fa-users"></i></div><div><p class="text-sm text-slate-400">Total Teams</p><h4 class="text-xl font-bold">${db.teams.length}</h4></div></div>
+                <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4"><div class="bg-emerald-600/20 text-emerald-400 p-3 rounded-xl text-xl"><i class="fa-solid fa-user-graduate"></i></div><div><p class="text-sm text-slate-400">Participants</p><h4 class="text-xl font-bold">${db.participants.length}</h4></div></div>
+                <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 flex items-center space-x-4"><div class="bg-amber-600/20 text-amber-400 p-3 rounded-xl text-xl"><i class="fa-solid fa-award"></i></div><div><p class="text-sm text-slate-400">Events Finished</p><h4 class="text-xl font-bold">${db.results.length}</h4></div></div>
+            `;
         }
 
-        function deleteParticipant(chest) {
-            db.participants = db.participants.filter(p => p.chest !== chest);
-            saveData();
-            renderAll();
-        }
-
-        function updateCode(chest, newCode) {
-            const p = db.participants.find(item => item.chest === chest);
-            if(p) {
-                p.code = newCode;
-                saveData();
-            }
-        }
+        // Initialize on load
+        initPublicPortal();
     </script>
 </body>
 </html>
