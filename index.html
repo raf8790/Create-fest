@@ -1,174 +1,397 @@
 <!DOCTYPE html>
-<html lang="ml">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fest Management System</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Fest Master Control Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-50 font-sans">
+<body class="bg-slate-100 text-slate-800 font-sans">
 
     <!-- Navbar -->
-    <nav class="bg-indigo-600 text-white p-4 shadow-md flex justify-between items-center">
-        <h1 class="text-xl font-bold"><i class="fa-solid fa-trophy mr-2"></i> Fest Manager Pro</h1>
-        <div class="space-x-4">
-            <button onclick="switchTab('register')" class="hover:underline">Registration</button>
-            <button onclick="switchTab('teams')" class="hover:underline">Teams & Code</button>
-            <button onclick="switchTab('judging')" class="hover:underline">Judge Scoring</button>
-            <button onclick="switchTab('public')" class="hover:underline font-semibold bg-indigo-700 px-3 py-1 rounded">Public Portal</button>
+    <header class="bg-indigo-700 text-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex flex-wrap justify-between items-center">
+            <h1 class="text-2xl font-bold">🏆 Fest Master Pro</h1>
+            <nav class="flex flex-wrap gap-2 mt-2 md:mt-0">
+                <button onclick="switchTab('dashboard')" class="px-3 py-1.5 bg-indigo-800 rounded hover:bg-indigo-600 transition">Dashboard</button>
+                <button onclick="switchTab('settings')" class="px-3 py-1.5 bg-indigo-800 rounded hover:bg-indigo-600 transition">Teams & Settings</button>
+                <button onclick="switchTab('register')" class="px-3 py-1.5 bg-indigo-800 rounded hover:bg-indigo-600 transition">Registration</button>
+                <button onclick="switchTab('scoring')" class="px-3 py-1.5 bg-indigo-800 rounded hover:bg-indigo-600 transition">Judge Scoring</button>
+                <button onclick="switchTab('public')" class="px-3 py-1.5 bg-emerald-600 rounded hover:bg-emerald-500 transition font-semibold">Public Portal</button>
+                <button onclick="switchTab('poster')" class="px-3 py-1.5 bg-amber-600 rounded hover:bg-amber-500 transition font-semibold">Result Poster</button>
+            </nav>
         </div>
-    </nav>
+    </header>
 
-    <div class="container mx-auto p-6">
-        
-        <!-- 1. REGISTRATION & CHEST NUMBER SECTION -->
-        <section id="register-section" class="tab-content bg-white p-6 rounded-lg shadow-md mb-6">
-            <h2 class="text-2xl font-bold mb-4 text-indigo-600">Participant Registration & Chest Number</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <input type="text" id="p-name" placeholder="Participant Name" class="border p-2 rounded w-full">
-                <select id="p-team" class="border p-2 rounded w-full">
-                    <option value="Team Alpha">Team Alpha</option>
-                    <option value="Team Beta">Team Beta</option>
-                    <option value="Team Gamma">Team Gamma</option>
-                </select>
-                <input type="text" id="p-chest" placeholder="Chest No (e.g., A-101)" class="border p-2 rounded w-full">
+    <main class="container mx-auto px-4 py-6">
+
+        <!-- DASHBOARD TAB -->
+        <section id="dashboard" class="tab-content space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-5 rounded-lg shadow border-l-4 border-indigo-600">
+                    <h3 class="text-gray-500 text-sm font-semibold">Total Participants</h3>
+                    <p id="stat-participants" class="text-3xl font-bold mt-1">0</p>
+                </div>
+                <div class="bg-white p-5 rounded-lg shadow border-l-4 border-emerald-600">
+                    <h3 class="text-gray-500 text-sm font-semibold">Total Teams</h3>
+                    <p id="stat-teams" class="text-3xl font-bold mt-1">0</p>
+                </div>
+                <div class="bg-white p-5 rounded-lg shadow border-l-4 border-amber-600">
+                    <h3 class="text-gray-500 text-sm font-semibold">Events / Results Saved</h3>
+                    <p id="stat-results" class="text-3xl font-bold mt-1">0</p>
+                </div>
             </div>
-            <button onclick="registerParticipant()" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Save Participant</button>
-            
-            <div class="mt-6">
-                <h3 class="font-bold text-lg mb-2">Registered List</h3>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h2 class="text-xl font-bold mb-3 text-indigo-700">📌 Quick Guide</h2>
+                <ul class="list-disc pl-5 space-y-2 text-slate-600">
+                    <li>Go to <strong>Teams & Settings</strong> to add your House/Teams and configure Chest Number formats.</li>
+                    <li>Use <strong>Registration</strong> to enroll participants and auto-generate custom chest numbers.</li>
+                    <li>Use <strong>Judge Scoring</strong> to enter positions (1st, 2nd, 3rd) and update points instantly.</li>
+                    <li>Check the <strong>Public Portal</strong> for live leaderboards and student dashboards.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- TEAMS & SETTINGS TAB -->
+        <section id="settings" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Team Configuration -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-xl font-bold mb-4 text-indigo-700">Manage Teams & Code Letters</h2>
+                    <form id="team-form" onsubmit="addTeam(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium">Team Name</label>
+                            <input type="text" id="team-name" required class="w-full mt-1 p-2 border rounded focus:ring focus:ring-indigo-300" placeholder="e.g., Red Panthers">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Code Letter</label>
+                            <input type="text" id="team-code" required maxlength="3" class="w-full mt-1 p-2 border rounded uppercase" placeholder="e.g., RP">
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 text-white p-2 rounded hover:bg-indigo-700">Add Team</button>
+                    </form>
+                    <div class="mt-6">
+                        <h3 class="font-bold mb-2">Active Teams</h3>
+                        <div id="team-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
+                    </div>
+                </div>
+
+                <!-- Chest Number Settings -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <h2 class="text-xl font-bold mb-4 text-indigo-700">Chest Number Pattern</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium">Prefix (e.g., ARTS, A-)</label>
+                            <input type="text" id="chest-prefix" class="w-full mt-1 p-2 border rounded" placeholder="ARTS">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Starting Number</label>
+                            <input type="number" id="chest-start" value="101" class="w-full mt-1 p-2 border rounded">
+                        </div>
+                        <button onclick="saveChestSettings()" class="w-full bg-emerald-600 text-white p-2 rounded hover:bg-emerald-700">Save Chest Settings</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- REGISTRATION TAB -->
+        <section id="register" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-lg shadow max-w-xl mx-auto">
+                <h2 class="text-xl font-bold mb-4 text-indigo-700">Participant Registration</h2>
+                <form id="reg-form" onsubmit="registerParticipant(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium">Participant Name</label>
+                        <input type="text" id="p-name" required class="w-full mt-1 p-2 border rounded" placeholder="Full Name">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Select Team</label>
+                        <select id="p-team" required class="w-full mt-1 p-2 border rounded"></select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Event Name</label>
+                        <input type="text" id="p-event" required class="w-full mt-1 p-2 border rounded" placeholder="e.g., Mono Act">
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 text-white p-2 rounded hover:bg-indigo-700">Register & Assign Chest No</button>
+                </form>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-bold mb-3">Registered Participants List</h3>
                 <div class="overflow-x-auto">
-                    <table class="w-full border-collapse border border-gray-200 text-left">
+                    <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-gray-100">
-                                <th class="border p-2">Chest No</th>
-                                <th class="border p-2">Name</th>
-                                <th class="border p-2">Team</th>
+                            <tr class="bg-slate-200">
+                                <th class="p-2 border">Chest No</th>
+                                <th class="p-2 border">Name</th>
+                                <th class="p-2 border">Team</th>
+                                <th class="p-2 border">Event</th>
+                                <th class="p-2 border">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="participant-table-body">
-                            <!-- Dynamic Data -->
-                        </tbody>
+                        <tbody id="participant-table-body"></tbody>
                     </table>
                 </div>
             </div>
         </section>
 
-        <!-- 2. JUDGE SCORING SECTION -->
-        <section id="judging-section" class="tab-content bg-white p-6 rounded-lg shadow-md mb-6 hidden">
-            <h2 class="text-2xl font-bold mb-4 text-indigo-600">Judge Point Entry</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                <select id="score-chest" class="border p-2 rounded w-full">
-                    <!-- Populated dynamically -->
-                </select>
-                <input type="text" id="score-item" placeholder="Event Name (e.g., Oppana)" class="border p-2 rounded w-full">
-                <input type="number" id="score-points" placeholder="Points / Mark" class="border p-2 rounded w-full">
+        <!-- JUDGE SCORING TAB -->
+        <section id="scoring" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-lg shadow max-w-xl mx-auto">
+                <h2 class="text-xl font-bold mb-4 text-indigo-700">Judge Point Entry</h2>
+                <form id="score-form" onsubmit="submitScore(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium">Event Name</label>
+                        <input type="text" id="score-event" required class="w-full mt-1 p-2 border rounded" placeholder="Event Name">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Chest Number / Winner</label>
+                        <select id="score-chest" required class="w-full mt-1 p-2 border rounded"></select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Position / Place</label>
+                        <select id="score-position" required class="w-full mt-1 p-2 border rounded">
+                            <option value="1">1st Place (5 Points)</option>
+                            <option value="2">2nd Place (3 Points)</option>
+                            <option value="3">3rd Place (1 Point)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-emerald-600 text-white p-2 rounded hover:bg-emerald-700">Add Score</button>
+                </form>
             </div>
-            <button onclick="addScore()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Submit Points</button>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-bold mb-3">Recorded Event Results</h3>
+                <div id="results-list" class="space-y-2"></div>
+            </div>
         </section>
 
-        <!-- 3. PUBLIC & TEAM PORTAL SECTION -->
-        <section id="public-section" class="tab-content bg-white p-6 rounded-lg shadow-md mb-6 hidden">
-            <h2 class="text-2xl font-bold mb-4 text-indigo-600">Live Results & Public Portal</h2>
-            <div id="live-results" class="space-y-2">
-                <!-- Live results will appear here -->
+        <!-- PUBLIC PORTAL TAB -->
+        <section id="public" class="tab-content hidden space-y-6">
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-6 rounded-lg shadow text-center">
+                <h2 class="text-3xl font-extrabold">🌟 Live Fest Leaderboard 🌟</h2>
+                <p class="text-indigo-100 mt-1">Real-time standings updated instantly</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-xl font-bold mb-4 text-indigo-700">Team Standings</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-200">
+                                <th class="p-3 border">Rank</th>
+                                <th class="p-3 border">Team Name</th>
+                                <th class="p-3 border">Code</th>
+                                <th class="p-3 border">Total Points</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body"></tbody>
+                    </table>
+                </div>
             </div>
         </section>
 
-    </div>
+        <!-- RESULT POSTER TAB -->
+        <section id="poster" class="tab-content hidden space-y-6">
+            <div class="bg-white p-8 rounded-lg shadow max-w-2xl mx-auto border-4 border-amber-400 text-center space-y-4">
+                <h2 class="text-3xl font-black text-amber-600">🏆 FEST WINNERS ANNOUNCEMENT 🏆</h2>
+                <div id="poster-content" class="text-left space-y-3 p-4 bg-amber-50 rounded border border-amber-200">
+                    <p class="text-center text-gray-500">Select or record results to generate poster view.</p>
+                </div>
+                <button onclick="window.print()" class="bg-indigo-600 text-white px-6 py-2 rounded font-bold hover:bg-indigo-700">Print / Save Poster PDF</button>
+            </div>
+        </section>
 
+    </main>
+
+    <!-- App Script -->
     <script>
-        // LocalStorage fallback so data doesn't wipe on back/refresh
-        let participants = JSON.parse(localStorage.getItem('fest_participants')) || [];
-        let scores = JSON.parse(localStorage.getItem('fest_scores')) || [];
+        // State Management stored in LocalStorage
+        let db = JSON.parse(localStorage.getItem('fest_db')) || {
+            teams: [],
+            participants: [],
+            results: [],
+            settings: { prefix: 'ARTS', startNum: 101 }
+        };
+
+        function saveData() {
+            localStorage.setItem('fest_db', JSON.stringify(db));
+            updateDashboard();
+        }
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            if(tabId === 'register') document.getElementById('register-section').classList.remove('hidden');
-            if(tabId === 'judging') document.getElementById('judging-section').classList.remove('hidden');
-            if(tabId === 'public') {
-                document.getElementById('public-section').classList.remove('hidden');
-                renderPublicResults();
-            }
-            updateDropdowns();
+            document.getElementById(tabId).classList.remove('hidden');
+            if(tabId === 'public') renderLeaderboard();
+            if(tabId === 'poster') renderPoster();
+            if(tabId === 'scoring') populateChestDropdown();
+            if(tabId === 'register') populateTeamDropdown();
         }
 
-        function registerParticipant() {
+        // Teams Logic
+        function addTeam(e) {
+            e.preventDefault();
+            const name = document.getElementById('team-name').value;
+            const code = document.getElementById('team-code').value.toUpperCase();
+            db.teams.push({ name, code, points: 0 });
+            saveData();
+            renderTeams();
+            document.getElementById('team-form').reset();
+        }
+
+        function renderTeams() {
+            const list = document.getElementById('team-list');
+            list.innerHTML = db.teams.map((t, index) => `
+                <div class="flex justify-between items-center p-2 bg-slate-50 border rounded">
+                    <span><strong>${t.name}</strong> (${t.code})</span>
+                    <button onclick="deleteTeam(${index})" class="text-red-500 hover:text-red-700 text-sm">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteTeam(index) {
+            db.teams.splice(index, 1);
+            saveData();
+            renderTeams();
+        }
+
+        function saveChestSettings() {
+            db.settings.prefix = document.getElementById('chest-prefix').value;
+            db.settings.startNum = parseInt(document.getElementById('chest-start').value);
+            saveData();
+            alert('Chest number settings saved successfully!');
+        }
+
+        // Registration Logic
+        function populateTeamDropdown() {
+            const select = document.getElementById('p-team');
+            select.innerHTML = db.teams.map(t => `<option value="${t.name}">${t.name} (${t.code})</option>`).join('');
+        }
+
+        function registerParticipant(e) {
+            e.preventDefault();
             const name = document.getElementById('p-name').value;
             const team = document.getElementById('p-team').value;
-            const chest = document.getElementById('p-chest').value;
-
-            if(!name || !chest) {
-                alert('कृपया എല്ലാ വിവരങ്ങളും നൽകുക!');
-                return;
-            }
-
-            participants.push({ name, team, chest });
-            localStorage.setItem('fest_participants', JSON.stringify(participants));
+            const eventName = document.getElementById('p-event').value;
             
-            document.getElementById('p-name').value = '';
-            document.getElementById('p-chest').value = '';
+            const chestNo = `${db.settings.prefix}-${db.settings.startNum++}`;
+            db.participants.push({ chestNo, name, team, eventName });
+            saveData();
             renderParticipants();
-            alert('വിജയകരമായി രജിസ്റ്റർ ചെയ്തു!');
+            document.getElementById('reg-form').reset();
+            alert(`Registered successfully! Chest Number: ${chestNo}`);
         }
 
         function renderParticipants() {
             const tbody = document.getElementById('participant-table-body');
-            tbody.innerHTML = '';
-            participants.forEach(p => {
-                tbody.innerHTML += `<tr><td class="border p-2">${p.chest}</td><td class="border p-2">${p.name}</td><td class="border p-2">${p.team}</td></tr>`;
-            });
+            tbody.innerHTML = db.participants.map((p, index) => `
+                <tr class="border-b">
+                    <td class="p-2 border font-bold text-indigo-600">${p.chestNo}</td>
+                    <td class="p-2 border">${p.name}</td>
+                    <td class="p-2 border">${p.team}</td>
+                    <td class="p-2 border">${p.eventName}</td>
+                    <td class="p-2 border"><button onclick="deleteParticipant(${index})" class="text-red-500 text-sm">Delete</button></td>
+                </tr>
+            `).join('');
         }
 
-        function updateDropdowns() {
+        function deleteParticipant(index) {
+            db.participants.splice(index, 1);
+            saveData();
+            renderParticipants();
+        }
+
+        // Scoring Logic
+        function populateChestDropdown() {
             const select = document.getElementById('score-chest');
-            select.innerHTML = '';
-            participants.forEach(p => {
-                select.innerHTML += `<option value="${p.chest}">${p.chest} - ${p.name}</option>`;
-            });
+            select.innerHTML = db.participants.map(p => `<option value="${p.chestNo}">${p.chestNo} - ${p.name} (${p.team})</option>`).join('');
         }
 
-        function addScore() {
-            const chest = document.getElementById('score-chest').value;
-            const item = document.getElementById('score-item').value;
-            const points = document.getElementById('score-points').value;
-
-            if(!item || !points) {
-                alert('ഇവന്റും പോയിന്റും നൽകുക!');
-                return;
-            }
-
-            const participant = participants.find(p => p.chest === chest);
-            scores.push({ chest, name: participant ? participant.name : 'Unknown', item, points });
-            localStorage.setItem('fest_scores', JSON.stringify(scores));
+        function submitScore(e) {
+            e.preventDefault();
+            const eventName = document.getElementById('score-event').value;
+            const chestNo = document.getElementById('score-chest').value;
+            const position = parseInt(document.getElementById('score-position').value);
             
-            document.getElementById('score-item').value = '';
-            document.getElementById('score-points').value = '';
-            alert('പോയിന്റ് വിജയകരമായി ചേർത്തു!');
+            // Point allocation rules: 1st = 5, 2nd = 3, 3rd = 1
+            const pointsMap = { 1: 5, 2: 3, 3: 1 };
+            const points = pointsMap[position];
+
+            const participant = db.participants.find(p => p.chestNo === chestNo);
+            if (!participant) return alert('Participant not found!');
+
+            // Add points to team
+            const teamObj = db.teams.find(t => t.name === participant.team);
+            if (teamObj) {
+                teamObj.points += points;
+            }
+
+            db.results.push({ eventName, chestNo, name: participant.name, team: participant.team, position, points });
+            saveData();
+            renderResults();
+            document.getElementById('score-form').reset();
+            alert('Score added successfully and leaderboard updated!');
         }
 
-        function renderPublicResults() {
-            const container = document.getElementById('live-results');
-            container.innerHTML = '';
-            if(scores.length === 0) {
-                container.innerHTML = '<p class="text-gray-500">ഇതുവരെ റിസൾട്ടുകൾ ഒന്നും അപ്ഡേറ്റ് ചെയ്തിട്ടില്ല.</p>';
+        function renderResults() {
+            const list = document.getElementById('results-list');
+            list.innerHTML = db.results.map((r, index) => `
+                <div class="p-3 bg-slate-50 border rounded flex justify-between items-center">
+                    <div>
+                        <strong>${r.eventName}</strong>: ${r.name} (${r.chestNo}) - <span class="text-indigo-600 font-semibold">${r.position === 1 ? '1st Place' : r.position === 2 ? '2nd Place' : '3rd Place'}</span> (${r.points} pts)
+                    </div>
+                    <button onclick="deleteResult(${index})" class="text-red-500 text-sm">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteResult(index) {
+            const res = db.results[index];
+            const teamObj = db.teams.find(t => t.name === res.team);
+            if(teamObj) teamObj.points -= res.points;
+            db.results.splice(index, 1);
+            saveData();
+            renderResults();
+        }
+
+        // Public Leaderboard
+        function renderLeaderboard() {
+            const sortedTeams = [...db.teams].sort((a, b) => b.points - a.points);
+            const tbody = document.getElementById('leaderboard-body');
+            tbody.innerHTML = sortedTeams.map((t, idx) => `
+                <tr class="border-b ${idx === 0 ? 'bg-amber-100 font-bold' : ''}">
+                    <td class="p-3 border">#${idx + 1}</td>
+                    <td class="p-3 border">${t.name}</td>
+                    <td class="p-3 border">${t.code}</td>
+                    <td class="p-3 border text-indigo-600 font-bold">${t.points}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Poster View
+        function renderPoster() {
+            const container = document.getElementById('poster-content');
+            if (db.results.length === 0) {
+                container.innerHTML = `<p class="text-center text-gray-500">No results recorded yet.</p>`;
                 return;
             }
-            scores.forEach(s => {
-                container.innerHTML += `
-                    <div class="p-3 border rounded flex justify-between items-center bg-gray-50">
-                        <div>
-                            <span class="font-bold text-indigo-600">${s.item}</span> - ${s.name} (${s.chest})
-                        </div>
-                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded font-bold">${s.points} Pts</span>
-                    </div>
-                `;
-            });
+            container.innerHTML = db.results.map(r => `
+                <div class="border-b pb-2">
+                    <h4 class="font-bold text-indigo-800">${r.eventName}</h4>
+                    <p class="text-sm">🥇 Winner: <strong>${r.name}</strong> (${r.team}) - Chest No: <strong>${r.chestNo}</strong></p>
+                </div>
+            `).join('');
         }
 
-        // Initial load
-        renderParticipants();
+        // Dashboard Init
+        function updateDashboard() {
+            document.getElementById('stat-participants').innerText = db.participants.length;
+            document.getElementById('stat-teams').innerText = db.teams.length;
+            document.getElementById('stat-results').innerText = db.results.length;
+            document.getElementById('chest-prefix').value = db.settings.prefix;
+            document.getElementById('chest-start').value = db.settings.startNum;
+            renderTeams();
+            renderParticipants();
+            renderResults();
+        }
+
+        // Initial Load
+        updateDashboard();
     </script>
 </body>
 </html>
