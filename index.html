@@ -4,515 +4,355 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FestMaster Pro - Complete Fest Management System</title>
-    <!-- Tailwind CSS CDN for Professional Look -->
+    <!-- Tailwind CSS for Professional Look -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+<body class="bg-slate-100 text-slate-800 font-sans">
 
-    <!-- Navigation Header -->
-    <header class="bg-indigo-900 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <i class="fa-solid fa-trophy text-amber-400 text-2xl"></i>
-                <span class="text-xl font-bold tracking-wide">FestMaster Pro</span>
+    <!-- LOGIN SECTION -->
+    <div id="login-section" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-purple-900 to-slate-900 p-4">
+        <div class="bg-white/10 backdrop-blur-md p-8 rounded-2xl shadow-2xl w-full max-w-md border border-white/20 text-white">
+            <div class="text-center mb-8">
+                <i class="fa-solid fa-trophy text-5xl text-amber-400 mb-3"></i>
+                <h1 class="text-3xl font-bold">FestMaster Pro</h1>
+                <p class="text-sm text-slate-300">Complete Arts & Sports Fest Management</p>
             </div>
-            <nav class="hidden md:flex space-x-6 text-sm font-medium">
-                <button onclick="switchTab('admin')" class="hover:text-amber-300 transition"><i class="fa-solid fa-gauge mr-1"></i> Admin Dashboard</button>
-                <button onclick="switchTab('judge')" class="hover:text-amber-300 transition"><i class="fa-solid fa-gavel mr-1"></i> Judge Panel</button>
-                <button onclick="switchTab('teamPortal')" class="hover:text-amber-300 transition"><i class="fa-solid fa-users mr-1"></i> Team Portal</button>
-                <button onclick="switchTab('publicPortal')" class="hover:text-amber-300 transition"><i class="fa-solid fa-globe mr-1"></i> Public Results</button>
-            </nav>
-            <div class="md:hidden">
-                <button onclick="toggleMobileMenu()" class="text-white focus:outline-none"><i class="fa-solid fa-bars text-xl"></i></button>
-            </div>
-        </div>
-        <!-- Mobile Nav -->
-        <div id="mobileMenu" class="hidden md:hidden bg-indigo-800 px-4 py-2 space-y-2 border-t border-indigo-700">
-            <button onclick="switchTab('admin'); toggleMobileMenu();" class="block w-text-left py-1 hover:text-amber-300">Admin Dashboard</button>
-            <button onclick="switchTab('judge'); toggleMobileMenu();" class="block w-text-left py-1 hover:text-amber-300">Judge Panel</button>
-            <button onclick="switchTab('teamPortal'); toggleMobileMenu();" class="block w-text-left py-1 hover:text-amber-300">Team Portal</button>
-            <button onclick="switchTab('publicPortal'); toggleMobileMenu();" class="block w-text-left py-1 hover:text-amber-300">Public Results</button>
-        </div>
-    </header>
-
-    <!-- Main Container -->
-    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
-
-        <!-- TAB 1: ADMIN DASHBOARD -->
-        <section id="adminTab" class="space-y-6">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-900">Admin Control Center</h1>
-                    <p class="text-sm text-slate-500">Manage Teams, Chest Numbers, Code Letters, Programs and Results seamlessly.</p>
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="exportData()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow transition"><i class="fa-solid fa-download mr-1"></i> Backup Data</button>
-                    <button onclick="resetAllData()" class="bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow transition"><i class="fa-solid fa-trash mr-1"></i> Reset All</button>
-                </div>
-            </div>
-
-            <!-- Admin Sub-grid: Teams & Participants/Chest Numbers -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Team Setup -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center"><i class="fa-solid fa-shield-halved text-indigo-600 mr-2"></i> Team Settings</h2>
-                    <form id="teamForm" onsubmit="addTeam(event)" class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Team Name</label>
-                            <input type="text" id="teamName" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g., Al-Shams / Titans">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Team Code / Prefix</label>
-                            <input type="text" id="teamCode" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g., TMS">
-                        </div>
-                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg transition">Add Team</button>
-                    </form>
-                    <div class="mt-4 overflow-x-auto">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
-                                <tr><th class="p-2">Team Name</th><th class="p-2">Code</th><th class="p-2">Action</th></tr>
-                            </thead>
-                            <tbody id="teamTableBody"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Registration & Chest Number / Code Letter Assignment -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center"><i class="fa-solid fa-id-card text-indigo-600 mr-2"></i> Participant & Chest Number Setting</h2>
-                    <form id="participantForm" onsubmit="addParticipant(event)" class="space-y-3">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Participant Name</label>
-                                <input type="text" id="partName" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Full Name">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Select Team</label>
-                                <select id="partTeam" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></select>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Program Name</label>
-                                <input type="text" id="partProgram" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g., Mappilappattu">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Custom Chest No</label>
-                                <input type="text" id="chestNo" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g., A101">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Code Letter (Anonymity)</label>
-                                <input type="text" id="codeLetter" required class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g., X-01">
-                            </div>
-                        </div>
-                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg transition mt-2">Register & Assign</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Registered List & Quick Overview -->
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <h3 class="text-md font-bold text-slate-800 mb-3">All Registrations & Chest Numbers</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-100 text-slate-600 uppercase text-xs">
-                            <tr>
-                                <th class="p-2">Chest No</th>
-                                <th class="p-2">Code Letter</th>
-                                <th class="p-2">Participant</th>
-                                <th class="p-2">Team</th>
-                                <th class="p-2">Program</th>
-                                <th class="p-2">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="participantTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 2: JUDGE PANEL -->
-        <section id="judgeTab" class="space-y-6 hidden">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <h1 class="text-2xl font-bold text-slate-900 mb-1"><i class="fa-solid fa-gavel text-indigo-600 mr-2"></i> Judge Score Input</h1>
-                <p class="text-sm text-slate-500 mb-6">Select program, view code letters/chest numbers, and enter points securely.</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div>
-                        <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Select Program</label>
-                        <select id="judgeProgramSelect" onchange="loadJudgeProgramParticipants()" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                            <option value="">-- Select Program --</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div id="judgeScoringContainer" class="overflow-x-auto">
-                    <p class="text-slate-500 italic text-sm">Please select a program above to enter points.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 3: TEAM PORTAL -->
-        <section id="teamPortalTab" class="space-y-6 hidden">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <h1 class="text-2xl font-bold text-slate-900 mb-1"><i class="fa-solid fa-users-rectangle text-indigo-600 mr-2"></i> Team Portal</h1>
-                <p class="text-sm text-slate-500 mb-4">Check team-wise chest numbers, programs, and live scores.</p>
-                
-                <div class="mb-4">
-                    <label class="block text-xs font-semibold uppercase text-slate-600 mb-1">Select Your Team</label>
-                    <select id="portalTeamSelect" onchange="loadTeamPortalData()" class="w-full md:w-1/3 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                        <option value="">-- Choose Team --</option>
+                    <label class="block text-sm mb-1">Select Role</label>
+                    <select id="login-role" class="w-full p-3 rounded-lg bg-white/20 border border-white/30 text-white focus:outline-none">
+                        <option value="admin" class="text-slate-900">Admin</option>
+                        <option value="judge" class="text-slate-900">Judge</option>
+                        <option value="team" class="text-slate-900">Team Portal</option>
+                        <option value="public" class="text-slate-900">Public Portal</option>
                     </select>
                 </div>
-
-                <div id="teamPortalContent" class="space-y-4">
-                    <p class="text-slate-500 italic text-sm">Select a team to view their dashboard.</p>
+                <div>
+                    <label class="block text-sm mb-1">Username</label>
+                    <input type="text" id="login-user" required class="w-full p-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-slate-400 focus:outline-none" placeholder="Enter username">
                 </div>
-            </div>
-        </section>
-
-        <!-- TAB 4: PUBLIC PORTAL & RESULT POSTER -->
-        <section id="publicPortalTab" class="space-y-6 hidden">
-            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-                    <div>
-                        <h1 class="text-2xl font-bold text-slate-900"><i class="fa-solid fa-globe text-indigo-600 mr-2"></i> Public Portal & Live Leaderboard</h1>
-                        <p class="text-sm text-slate-500">Live points tally and result announcements.</p>
-                    </div>
-                    <button onclick="generateResultPoster()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow transition"><i class="fa-solid fa-image mr-1"></i> Generate Result Card</button>
+                <div>
+                    <label class="block text-sm mb-1">Password</label>
+                    <input type="password" id="login-pass" required class="w-full p-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-slate-400 focus:outline-none" placeholder="Enter password">
                 </div>
-
-                <!-- Leaderboard -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" id="leaderboardCards">
-                    <!-- Dynamic Leaderboard -->
-                </div>
-
-                <!-- Detailed Program Results -->
-                <h3 class="text-lg font-bold text-slate-800 mb-3">Published Program Results</h3>
-                <div id="publicResultsContainer" class="space-y-4">
-                    <!-- Dynamic Results -->
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Result Poster Modal -->
-    <div id="posterModal" class="fixed inset-0 bg-black/60 hidden flex items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-2xl max-w-lg w-full p-6 relative shadow-2xl">
-            <button onclick="closePosterModal()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700"><i class="fa-solid fa-xmark text-xl"></i></button>
-            <div id="posterCardContent" class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white p-6 rounded-xl text-center space-y-4 shadow-inner border border-amber-400/30">
-                <div class="uppercase tracking-widest text-amber-400 text-xs font-bold">Official Result Announcement</div>
-                <h2 id="posterProgramTitle" class="text-2xl font-extrabold">Program Name</h2>
-                <div class="py-4 space-y-2" id="posterWinnersList">
-                    <!-- Winners -->
-                </div>
-                <div class="text-xs text-slate-400 pt-2 border-t border-slate-700">FestMaster Pro Automated System</div>
-            </div>
-            <div class="mt-4 flex justify-end">
-                <button onclick="alert('Screenshot or save this card as your result poster!');" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium w-full">Got It</button>
+                <button type="submit" class="w-full py-3 bg-amber-500 hover:bg-amber-600 font-bold rounded-lg transition duration-200 shadow-lg">Login to Fest</button>
+            </form>
+            <div class="mt-4 text-xs text-center text-slate-300">
+                <p>Default Admin: <b>admin</b> / <b>admin123</b></p>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 text-center py-4 text-xs text-slate-500">
-        FestMaster Pro &bull; Complete Fest & Arts Festival Management Solution
-    </footer>
+    <!-- MAIN DASHBOARD -->
+    <div id="dashboard-section" class="hidden min-h-screen flex flex-col">
+        <!-- Navbar -->
+        <header class="bg-indigo-900 text-white shadow-md px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-award text-2xl text-amber-400"></i>
+                <span class="text-xl font-bold tracking-wider">FestMaster Dashboard</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span id="welcome-user" class="text-sm bg-indigo-800 px-3 py-1 rounded-full"></span>
+                <button onclick="logout()" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-sm font-semibold transition"><i class="fa-solid fa-right-from-bracket mr-1"></i> Logout</button>
+            </div>
+        </header>
 
-    <!-- JavaScript Logic with LocalStorage Persistence -->
+        <!-- Content Body -->
+        <div class="flex flex-1 flex-col md:flex-row">
+            <!-- Sidebar -->
+            <aside class="w-full md:w-64 bg-slate-900 text-slate-300 p-4 space-y-2">
+                <button onclick="switchTab('reg')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 hover:text-white transition flex items-center space-x-3"><i class="fa-solid fa-user-plus w-5"></i><span>Registration & Chest No</span></button>
+                <button onclick="switchTab('teams')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 hover:text-white transition flex items-center space-x-3"><i class="fa-solid fa-users w-5"></i><span>Team Settings</span></button>
+                <button onclick="switchTab('codes')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 hover:text-white transition flex items-center space-x-3"><i class="fa-solid fa-barcode w-5"></i><span>Code Letter Assign</span></button>
+                <button onclick="switchTab('judging')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 hover:text-white transition flex items-center space-x-3"><i class="fa-solid fa-star w-5"></i><span>Judge & Point Entry</span></button>
+                <button onclick="switchTab('results')" class="w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 hover:text-white transition flex items-center space-x-3"><i class="fa-solid fa-chart-line w-5"></i><span>Live Results & Poster</span></button>
+            </aside>
+
+            <!-- Main Workspace -->
+            <main class="flex-1 p-6 overflow-y-auto">
+                
+                <!-- TAB 1: REGISTRATION & CHEST NUMBER -->
+                <div id="tab-reg" class="tab-content space-y-6">
+                    <h2 class="text-2xl font-bold text-slate-800">Participant Registration & Chest Numbers</h2>
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                        <form onsubmit="addParticipant(event)" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Participant Name</label>
+                                <input type="text" id="p-name" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Team / House</label>
+                                <select id="p-team" class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+                                    <option value="Alpha">Alpha Team</option>
+                                    <option value="Beta">Beta Team</option>
+                                    <option value="Gamma">Gamma Team</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Chest Number (Custom)</label>
+                                <input type="text" id="p-chest" required class="w-full p-2.5 border rounded-lg focus:ring-2 focus:ring-indigo-500" placeholder="Ex: A101">
+                            </div>
+                            <div class="flex items-end">
+                                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition">Register Now</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Participants List Table -->
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="bg-slate-100 border-b">
+                                <tr>
+                                    <th class="p-4 font-semibold">Chest No</th>
+                                    <th class="p-4 font-semibold">Name</th>
+                                    <th class="p-4 font-semibold">Team</th>
+                                    <th class="p-4 font-semibold">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="participant-table-body">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 2: TEAM SETTINGS -->
+                <div id="tab-teams" class="tab-content hidden space-y-6">
+                    <h2 class="text-2xl font-bold text-slate-800">Team Portal & Settings</h2>
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                        <p class="text-sm text-slate-600 mb-4">Manage participating teams and house names here.</p>
+                        <div class="flex gap-4">
+                            <input type="text" id="new-team-name" placeholder="Enter Team Name" class="p-2.5 border rounded-lg flex-1">
+                            <button onclick="addTeam()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-lg font-semibold">Add Team</button>
+                        </div>
+                    </div>
+                    <div id="teams-list" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Team Cards -->
+                    </div>
+                </div>
+
+                <!-- TAB 3: CODE LETTER ASSIGN -->
+                <div id="tab-codes" class="tab-content hidden space-y-6">
+                    <h2 class="text-2xl font-bold text-slate-800">Code Letter Assignment</h2>
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                        <p class="text-sm text-slate-600 mb-4">Assign confidential code letters to participants for fair judging.</p>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-slate-100 border-b">
+                                    <tr>
+                                        <th class="p-4">Chest No</th>
+                                        <th class="p-4">Name</th>
+                                        <th class="p-4">Assigned Code Letter</th>
+                                        <th class="p-4">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="code-table-body">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: JUDGE & POINT ENTRY -->
+                <div id="tab-judging" class="tab-content hidden space-y-6">
+                    <h2 class="text-2xl font-bold text-slate-800">Judge Point Entry</h2>
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                        <form onsubmit="savePoints(event)" class="space-y-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Select Participant (Chest No)</label>
+                                    <select id="judge-participant" class="w-full p-2.5 border rounded-lg"></select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Event Name</label>
+                                    <input type="text" id="judge-event" required class="w-full p-2.5 border rounded-lg" placeholder="Ex: Light Music">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1">Points Awarded</label>
+                                    <input type="number" id="judge-points" required class="w-full p-2.5 border rounded-lg" placeholder="Ex: 10">
+                                </div>
+                            </div>
+                            <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-2.5 rounded-lg transition">Submit Points</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- TAB 5: LIVE RESULTS & POSTER -->
+                <div id="tab-results" class="tab-content hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold text-slate-800">Live Results & Public Portal</h2>
+                        <button onclick="window.print()" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm"><i class="fa-solid fa-print mr-1"></i> Print Poster</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+                        <h3 class="text-lg font-bold mb-4 text-indigo-900 border-b pb-2">Leaderboard & Standings</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead class="bg-indigo-50 border-b">
+                                    <tr>
+                                        <th class="p-4">Rank / Position</th>
+                                        <th class="p-4">Chest No</th>
+                                        <th class="p-4">Name</th>
+                                        <th class="p-4">Event</th>
+                                        <th class="p-4">Total Points</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="results-table-body">
+                                    <!-- Dynamic leaderboard -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic with LocalStorage -->
     <script>
-        // Data State initialized from localStorage
-        let db = JSON.parse(localStorage.getItem('festMasterDB')) || {
-            teams: [],
+        // Database simulation using localStorage
+        let db = JSON.parse(localStorage.getItem('fest_db')) || {
             participants: [],
-            scores: {} // { programName: { chestNo: points } }
+            teams: ['Alpha', 'Beta', 'Gamma'],
+            points: []
         };
 
         function saveData() {
-            localStorage.setItem('festMasterDB', JSON.stringify(db));
-            refreshUI();
+            localStorage.setItem('fest_db', JSON.stringify(db));
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const role = document.getElementById('login-role').value;
+            const user = document.getElementById('login-user').value;
+            
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('dashboard-section').classList.remove('hidden');
+            document.getElementById('welcome-user').innerText = `${role.toUpperCase()}: ${user}`;
+            
+            renderAll();
+        }
+
+        function logout() {
+            document.getElementById('dashboard-section').classList.add('hidden');
+            document.getElementById('login-section').classList.remove('hidden');
         }
 
         function switchTab(tabId) {
-            ['adminTab', 'judgeTab', 'teamPortalTab', 'publicPortalTab'].forEach(id => {
-                document.getElementById(id).classList.add('hidden');
-            });
-            document.getElementById(tabId + 'Tab').classList.remove('hidden');
-            refreshUI();
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            renderAll();
         }
 
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobileMenu');
-            menu.classList.toggle('hidden');
-        }
-
-        // --- TEAM MANAGEMENT ---
-        function addTeam(e) {
-            e.preventDefault();
-            const name = document.getElementById('teamName').value.trim();
-            const code = document.getElementById('teamCode').value.trim().toUpperCase();
-            if(db.teams.some(t => t.code === code)) {
-                alert('Team code already exists!');
-                return;
-            }
-            db.teams.push({ name, code });
-            saveData();
-            document.getElementById('teamForm').reset();
-        }
-
-        function deleteTeam(code) {
-            db.teams = db.teams.filter(t => t.code !== code);
-            saveData();
-        }
-
-        // --- PARTICIPANT REGISTRATION ---
+        // Add Participant
         function addParticipant(e) {
             e.preventDefault();
-            const name = document.getElementById('partName').value.trim();
-            const team = document.getElementById('partTeam').value;
-            const program = document.getElementById('partProgram').value.trim();
-            const chestNo = document.getElementById('chestNo').value.trim();
-            const codeLetter = document.getElementById('codeLetter').value.trim();
+            const name = document.getElementById('p-name').value;
+            const team = document.getElementById('p-team').value;
+            const chest = document.getElementById('p-chest').value;
 
-            db.participants.push({ id: Date.now(), name, team, program, chestNo, codeLetter });
+            db.participants.push({ chest, name, team, code: 'C-' + Math.floor(Math.random() * 900 + 100) });
             saveData();
-            document.getElementById('participantForm').reset();
-            alert('Participant registered & Chest number assigned successfully!');
+            renderAll();
+            e.target.reset();
         }
 
-        function deleteParticipant(id) {
-            db.participants = db.participants.filter(p => p.id !== id);
+        // Add Team
+        function addTeam() {
+            const teamName = document.getElementById('new-team-name').value;
+            if(teamName && !db.teams.includes(teamName)) {
+                db.teams.push(teamName);
+                saveData();
+                renderAll();
+                document.getElementById('new-team-name').value = '';
+            }
+        }
+
+        // Save Points
+        function savePoints(e) {
+            e.preventDefault();
+            const chest = document.getElementById('judge-participant').value;
+            const eventName = document.getElementById('judge-event').value;
+            const points = parseInt(document.getElementById('judge-points').value);
+
+            db.points.push({ chest, eventName, points });
             saveData();
+            alert('Points successfully added!');
+            renderAll();
+            e.target.reset();
         }
 
-        // --- JUDGE SCORING ---
-        function saveScore(program, chestNo, points) {
-            if(!db.scores[program]) db.scores[program] = {};
-            db.scores[program][chestNo] = parseFloat(points) || 0;
+        // Render Functions
+        function renderAll() {
+            // Render Participants Table
+            const pTable = document.getElementById('participant-table-body');
+            pTable.innerHTML = db.participants.map(p => `
+                <tr class="border-b hover:bg-slate-50">
+                    <td class="p-4 font-bold text-indigo-600">${p.chest}</td>
+                    <td class="p-4">${p.name}</td>
+                    <td class="p-4"><span class="bg-slate-200 px-2.5 py-1 rounded-full text-xs font-semibold">${p.team}</span></td>
+                    <td class="p-4"><button onclick="deleteParticipant('${p.chest}')" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button></td>
+                </tr>
+            `).join('');
+
+            // Render Team Dropdown & List
+            const teamSelect = document.getElementById('p-team');
+            teamSelect.innerHTML = db.teams.map(t => `<option value="${t}">${t} Team</option>`).join('');
+
+            const teamList = document.getElementById('teams-list');
+            teamList.innerHTML = db.teams.map(t => `
+                <div class="bg-white p-4 rounded-xl shadow border border-slate-200 flex justify-between items-center">
+                    <span class="font-bold text-lg text-indigo-900">${t}</span>
+                    <span class="text-sm bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg">Active Team</span>
+                </div>
+            `).join('');
+
+            // Render Codes Table
+            const codeTable = document.getElementById('code-table-body');
+            codeTable.innerHTML = db.participants.map(p => `
+                <tr class="border-b">
+                    <td class="p-4 font-bold">${p.chest}</td>
+                    <td class="p-4">${p.name}</td>
+                    <td class="p-4"><input type="text" value="${p.code}" onchange="updateCode('${p.chest}', this.value)" class="border p-1 rounded font-mono text-indigo-600 font-bold w-28"></td>
+                    <td class="p-4 text-sm text-green-600"><i class="fa-solid fa-check-circle"></i> Assigned</td>
+                </tr>
+            `).join('');
+
+            // Render Judge Participant Dropdown
+            const judgePartSelect = document.getElementById('judge-participant');
+            judgePartSelect.innerHTML = db.participants.map(p => `<option value="${p.chest}">${p.chest} - ${p.name}</option>`).join('');
+
+            // Render Results / Leaderboard
+            const resTable = document.getElementById('results-table-body');
+            resTable.innerHTML = db.points.map((pt, index) => {
+                const participant = db.participants.find(p => p.chest === pt.chest) || { name: 'Unknown' };
+                return `
+                    <tr class="border-b hover:bg-slate-50">
+                        <td class="p-4 font-bold">#${index + 1}</td>
+                        <td class="p-4 text-indigo-600 font-semibold">${pt.chest}</td>
+                        <td class="p-4">${participant.name}</td>
+                        <td class="p-4">${pt.eventName}</td>
+                        <td class="p-4 font-bold text-amber-600">${pt.points} Pts</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function deleteParticipant(chest) {
+            db.participants = db.participants.filter(p => p.chest !== chest);
             saveData();
+            renderAll();
         }
 
-        // --- UI REFRESHER ---
-        function refreshUI() {
-            // Populate Team Table & Select Options
-            const teamTableBody = document.getElementById('teamTableBody');
-            const partTeamSelect = document.getElementById('partTeam');
-            const portalTeamSelect = document.getElementById('portalTeamSelect');
-            
-            teamTableBody.innerHTML = '';
-            partTeamSelect.innerHTML = '<option value="">-- Select Team --</option>';
-            portalTeamSelect.innerHTML = '<option value="">-- Choose Team --</option>';
-
-            db.teams.forEach(t => {
-                teamTableBody.innerHTML += `<tr class="border-b"><td class="p-2 font-medium">${t.name}</td><td class="p-2">${t.code}</td><td class="p-2"><button onclick="deleteTeam('${t.code}')" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button></td></tr>`;
-                partTeamSelect.innerHTML += `<option value="${t.code}">${t.name} (${t.code})</option>`;
-                portalTeamSelect.innerHTML += `<option value="${t.code}">${t.name} (${t.code})</option>`;
-            });
-
-            // Populate Participant Table
-            const partTableBody = document.getElementById('participantTableBody');
-            partTableBody.innerHTML = '';
-            db.participants.forEach(p => {
-                partTableBody.innerHTML += `<tr class="border-b text-xs md:text-sm"><td class="p-2 font-bold text-indigo-600">${p.chestNo}</td><td class="p-2 font-mono">${p.codeLetter}</td><td class="p-2">${p.name}</td><td class="p-2">${p.team}</td><td class="p-2">${p.program}</td><td class="p-2"><button onclick="deleteParticipant(${p.id})" class="text-rose-600 hover:text-rose-800"><i class="fa-solid fa-trash"></i></button></td></tr>`;
-            });
-
-            // Populate Judge Program Select
-            const judgeProgramSelect = document.getElementById('judgeProgramSelect');
-            const programs = [...new Set(db.participants.map(p => p.program))];
-            const currentSelectedProg = judgeProgramSelect.value;
-            judgeProgramSelect.innerHTML = '<option value="">-- Select Program --</option>';
-            programs.forEach(prog => {
-                judgeProgramSelect.innerHTML += `<option value="${prog}" ${prog === currentSelectedProg ? 'selected' : ''}>${prog}</option>`;
-            });
-            if(currentSelectedProg) loadJudgeProgramParticipants();
-
-            loadTeamPortalData();
-            loadPublicPortal();
-        }
-
-        function loadJudgeProgramParticipants() {
-            const prog = document.getElementById('judgeProgramSelect').value;
-            const container = document.getElementById('judgeScoringContainer');
-            if(!prog) {
-                container.innerHTML = '<p class="text-slate-500 italic text-sm">Please select a program above to enter points.</p>';
-                return;
-            }
-
-            const participantsInProg = db.participants.filter(p => p.program === prog);
-            if(participantsInProg.length === 0) {
-                container.innerHTML = '<p class="text-slate-500 italic text-sm">No participants found in this program.</p>';
-                return;
-            }
-
-            let html = `<table class="w-full text-left text-sm"><thead class="bg-slate-100 uppercase text-xs"><tr><th class="p-2">Chest No</th><th class="p-2">Code Letter</th><th class="p-2">Name</th><th class="p-2">Team</th><th class="p-2">Points / Grade</th></tr></thead><tbody>`;
-            
-            participantsInProg.forEach(p => {
-                const currentScore = (db.scores[prog] && db.scores[prog][p.chestNo] !== undefined) ? db.scores[prog][p.chestNo] : '';
-                html += `<tr class="border-b">
-                    <td class="p-2 font-bold">${p.chestNo}</td>
-                    <td class="p-2 font-mono text-indigo-600">${p.codeLetter}</td>
-                    <td class="p-2">${p.name}</td>
-                    <td class="p-2">${p.team}</td>
-                    <td class="p-2"><input type="number" step="0.5" value="${currentScore}" onchange="saveScore('${prog}', '${p.chestNo}', this.value)" class="w-24 px-2 py-1 border rounded focus:ring-2 focus:ring-indigo-500" placeholder="Points"></td>
-                </tr>`;
-            });
-            html += `</tbody></table>`;
-            container.innerHTML = html;
-        }
-
-        function loadTeamPortalData() {
-            const teamCode = document.getElementById('portalTeamSelect').value;
-            const container = document.getElementById('teamPortalContent');
-            if(!teamCode) {
-                container.innerHTML = '<p class="text-slate-500 italic text-sm">Select a team to view their dashboard.</p>';
-                return;
-            }
-
-            const teamParts = db.participants.filter(p => p.team === teamCode);
-            let teamTotalPoints = 0;
-
-            // Calculate total points for this team
-            Object.keys(db.scores).forEach(prog => {
-                Object.keys(db.scores[prog]).forEach(chestNo => {
-                    const part = db.participants.find(p => p.chestNo === chestNo && p.team === teamCode && p.program === prog);
-                    if(part) teamTotalPoints += db.scores[prog][chestNo];
-                });
-            });
-
-            let html = `<div class="bg-indigo-50 p-4 rounded-xl border border-indigo-100 flex justify-between items-center">
-                <div><h3 class="font-bold text-indigo-900 text-lg">Total Team Points</h3><p class="text-xs text-indigo-600">Calculated from all events</p></div>
-                <div class="text-3xl font-extrabold text-indigo-600">${teamTotalPoints}</div>
-            </div>
-            <h4 class="font-bold text-slate-800 mt-4 mb-2">Team Participants & Chest Numbers</h4>
-            <div class="overflow-x-auto"><table class="w-full text-left text-sm"><thead class="bg-slate-100 uppercase text-xs"><tr><th class="p-2">Chest No</th><th class="p-2">Name</th><th class="p-2">Program</th></tr></thead><tbody>`;
-            
-            if(teamParts.length === 0) {
-                html += `<tr><td colspan="3" class="p-4 text-center text-slate-500 italic">No participants registered under this team yet.</td></tr>`;
-            } else {
-                teamParts.forEach(p => {
-                    html += `<tr class="border-b"><td class="p-2 font-bold">${p.chestNo}</td><td class="p-2">${p.name}</td><td class="p-2">${p.program}</td></tr>`;
-                });
-            }
-            html += `</tbody></table></div>`;
-            container.innerHTML = html;
-        }
-
-        function loadPublicPortal() {
-            // Calculate Leaderboard
-            let teamScores = {};
-            db.teams.forEach(t => teamScores[t.code] = { name: t.name, points: 0 });
-
-            Object.keys(db.scores).forEach(prog => {
-                Object.keys(db.scores[prog]).forEach(chestNo => {
-                    const pts = db.scores[prog][chestNo];
-                    const part = db.participants.find(p => p.chestNo === chestNo);
-                    if(part && teamScores[part.team]) {
-                        teamScores[part.team].points += pts;
-                    }
-                });
-            });
-
-            // Sort teams by points
-            const sortedTeams = Object.values(teamScores).sort((a,b) => b.points - a.points);
-            
-            const leaderboardCards = document.getElementById('leaderboardCards');
-            leaderboardCards.innerHTML = '';
-            sortedTeams.forEach((t, index) => {
-                const badgeColor = index === 0 ? 'bg-amber-100 text-amber-800 border-amber-300' : (index === 1 ? 'bg-slate-100 text-slate-800 border-slate-300' : 'bg-orange-50 text-orange-800 border-orange-200');
-                leaderboardCards.innerHTML += `<div class="p-4 rounded-xl border ${badgeColor} shadow-sm flex items-center justify-between">
-                    <div>
-                        <div class="text-xs uppercase font-bold opacity-75">Rank #${index + 1}</div>
-                        <h4 class="text-lg font-extrabold">${t.name}</h4>
-                    </div>
-                    <div class="text-2xl font-black">${t.points} pts</div>
-                </div>`;
-            });
-
-            // Public Results
-            const resultsContainer = document.getElementById('publicResultsContainer');
-            resultsContainer.innerHTML = '';
-            const programs = Object.keys(db.scores);
-            if(programs.length === 0) {
-                resultsContainer.innerHTML = '<p class="text-slate-500 italic text-sm">No results published yet.</p>';
-                return;
-            }
-
-            programs.forEach(prog => {
-                let progScores = [];
-                Object.keys(db.scores[prog]).forEach(chestNo => {
-                    progScores.push({ chestNo, points: db.scores[prog][chestNo] });
-                });
-                progScores.sort((a,b) => b.points - a.points);
-
-                let resHtml = `<div class="bg-slate-50 p-4 rounded-xl border border-slate-200"><h4 class="font-bold text-slate-800 mb-2">${prog}</h4><div class="space-y-1">`;
-                progScores.forEach((s, idx) => {
-                    const part = db.participants.find(p => p.chestNo === s.chestNo && p.program === prog);
-                    if(part) {
-                        resHtml += `<div class="flex justify-between text-sm bg-white p-2 rounded border border-slate-100">
-                            <span><strong>#${idx+1}</strong> - ${part.name} (${part.team}) [Chest: ${part.chestNo}]</span>
-                            <span class="font-bold text-indigo-600">${s.points} pts</span>
-                        </div>`;
-                    }
-                });
-                resHtml += `</div></div>`;
-                resultsContainer.innerHTML += resHtml;
-            });
-        }
-
-        function generateResultPoster() {
-            const programs = Object.keys(db.scores);
-            if(programs.length === 0) {
-                alert('No results available to generate poster!');
-                return;
-            }
-            // Pick first program or latest for poster preview
-            const prog = programs[0];
-            document.getElementById('posterProgramTitle').innerText = prog;
-
-            let progScores = [];
-            Object.keys(db.scores[prog]).forEach(chestNo => {
-                progScores.push({ chestNo, points: db.scores[prog][chestNo] });
-            });
-            progScores.sort((a,b) => b.points - a.points);
-
-            let winnersHtml = '';
-            progScores.slice(0, 3).forEach((s, idx) => {
-                const part = db.participants.find(p => p.chestNo === s.chestNo && p.program === prog);
-                if(part) {
-                    const medals = ['🥇 1st Place', '🥈 2nd Place', '🥉 3rd Place'];
-                    winnersHtml += `<div class="bg-white/10 p-2 rounded"><div class="text-amber-300 text-xs font-bold">${medals[idx]}</div><div class="text-lg font-bold">${part.name} (${part.team})</div><div class="text-xs text-slate-300">Chest No: ${part.chestNo} | Score: ${s.points}</div></div>`;
-                }
-            });
-
-            document.getElementById('posterWinnersList').innerHTML = winnersHtml || '<p>No winners recorded</p>';
-            document.getElementById('posterModal').classList.remove('hidden');
-        }
-
-        function closePosterModal() {
-            document.getElementById('posterModal').classList.add('hidden');
-        }
-
-        function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
-            const dlAnchorElem = document.createElement('a');
-            dlAnchorElem.setAttribute("href", dataStr);
-            dlAnchorElem.setAttribute("download", "festmaster_backup.json");
-            dlAnchorElem.click();
-        }
-
-        function resetAllData() {
-            if(confirm('Are you sure you want to reset all data? This cannot be undone.')) {
-                localStorage.removeItem('festMasterDB');
-                db = { teams: [], participants: [], scores: {} };
-                refreshUI();
+        function updateCode(chest, newCode) {
+            const p = db.participants.find(item => item.chest === chest);
+            if(p) {
+                p.code = newCode;
+                saveData();
             }
         }
-
-        // Initial Load
-        refreshUI();
     </script>
 </body>
 </html>
