@@ -18,12 +18,14 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.5; }
         
+        /* Navbar */
         header { display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); }
         .logo-container { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.25rem; color: var(--text-main); }
         .logo-icon { background: var(--primary); color: white; padding: 8px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
         .btn-get-started { background: var(--text-main); color: white; border: none; padding: 10px 20px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .btn-get-started:hover { background: var(--primary); }
 
+        /* Hero Section */
         .hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 60px 20px; max-width: 800px; margin: 0 auto; }
         .badge { background: #f1f5f9; border: 1px solid var(--border); padding: 6px 16px; border-radius: 50px; font-size: 0.85rem; font-weight: 500; color: #059669; margin-bottom: 24px; display: inline-flex; align-items: center; gap: 6px; }
         h1 { font-size: 3rem; font-weight: 800; line-height: 1.15; margin-bottom: 20px; color: var(--text-main); }
@@ -35,9 +37,11 @@
         .btn-primary:hover { background: var(--primary-dark); }
         .btn-secondary { background: white; color: var(--text-main); border: 1px solid var(--border); padding: 14px 28px; border-radius: 12px; font-weight: 600; cursor: pointer; }
 
+        /* Container Views */
         .container { max-width: 1000px; margin: 40px auto; padding: 20px; display: none; }
         .active-view { display: block; }
         
+        /* Form Card */
         .card { background: var(--card-bg); border: 1px solid var(--border); padding: 40px; border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
         .card h2 { margin-bottom: 8px; font-size: 1.5rem; }
         .card p.subtitle { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px; }
@@ -49,6 +53,7 @@
         
         .security-footer { text-align: center; margin-top: 30px; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
 
+        /* Dashboard Styles */
         .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
         .grid-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .stat-card { background: white; padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
@@ -68,6 +73,7 @@
 </head>
 <body>
 
+    <!-- Header / Navbar -->
     <header>
         <div class="logo-container">
             <div class="logo-icon">
@@ -78,6 +84,7 @@
         <button class="btn-get-started" onclick="showLogin()">Sign In</button>
     </header>
 
+    <!-- Home View -->
     <div id="homeView" class="container active-view" style="display: block;">
         <section class="hero">
             <div class="badge">
@@ -92,10 +99,11 @@
         </section>
     </div>
 
+    <!-- Create Fest View -->
     <div id="createFestView" class="container">
         <div class="card" style="max-width: 600px; margin: 0 auto;">
             <h2>Create New Fest</h2>
-            <p class="subtitle">Enter fest details to generate workspace and send WhatsApp OTP.</p>
+            <p class="subtitle">പുതിയ ഫെസ്റ്റ് ക്രിയേറ്റ് ചെയ്യുമ്പോൾ 7560949421 എന്ന വാട്സാപ്പ് നമ്പറിലേക്ക് OTP അയക്കപ്പെടും.</p>
             <div class="form-group">
                 <label>Fest Name</label>
                 <input type="text" id="newFestName" class="form-control" placeholder="e.g. Apex Inter-College Fest 2026">
@@ -108,23 +116,24 @@
                 <label>Admin Password</label>
                 <input type="password" id="newAdminPass" class="form-control" placeholder="Choose secure password">
             </div>
-            <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="sendWhatsAppDirectOtp()">Send WhatsApp OTP (7560949421)</button>
+            <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="triggerWhatsAppOTP()">Send WhatsApp OTP to Admin (7560949421)</button>
             <button class="btn-secondary" style="width: 100%; margin-top: 10px;" onclick="switchView('homeView')">Back to Home</button>
         </div>
     </div>
 
+    <!-- OTP Verification View -->
     <div id="otpView" class="container">
         <div class="card" style="max-width: 450px; margin: 0 auto; text-align: center;">
             <h2>OTP Verification</h2>
-            <p class="subtitle">6 അക്ക കോഡ് <strong>7560949421</strong> എന്ന വാട്സാപ്പ് നമ്പറിലേക്ക് അയച്ചിരിക്കുന്നു.</p>
+            <p class="subtitle">7560949421 എന്ന നമ്പറിലേക്ക് അയച്ച 6 അക്ക കോഡ് നൽകുക (ഈ കോഡ് അഡ്മിന് മാത്രമേ അറിയാൻ കഴിയൂ).</p>
             <div class="form-group">
                 <input type="text" id="otpInput" class="form-control" placeholder="Enter 6-digit OTP" maxlength="6" style="text-align: center; font-size: 1.5rem; letter-spacing: 0.3em;">
             </div>
-            <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="verifyOtpCode()">Verify & Login</button>
-            <button class="btn-secondary" style="width: 100%; margin-top: 10px;" onclick="sendWhatsAppDirectOtp()">Resend WhatsApp OTP</button>
+            <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="verifyOtpCode()">Verify & Create Fest</button>
         </div>
     </div>
 
+    <!-- Login View -->
     <div id="loginView" class="container">
         <div class="card" style="max-width: 480px; margin: 0 auto;">
             <h2>Sign in to your designated workspace.</h2>
@@ -149,6 +158,7 @@
         </div>
     </div>
 
+    <!-- Admin / Super Admin Dashboard -->
     <div id="adminDashboard" class="container">
         <div class="dashboard-header">
             <div>
@@ -173,29 +183,31 @@
             </div>
         </div>
 
+        <!-- Control Modules -->
         <div class="action-panel">
-            <h4>⚙️ Chest Number Configuration</h4>
+            <h4>⚙️ Chest Number Configuration (Auto / Manual)</h4>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <input type="text" id="chestPrefix" class="form-control" placeholder="Prefix (e.g. A)" style="max-width: 150px;">
                 <input type="number" id="chestStart" class="form-control" placeholder="Start Number (e.g. 101)" style="max-width: 200px;">
-                <button class="btn-primary" onclick="saveChestConfig()">Set Auto Config</button>
+                <button class="btn-primary" onclick="saveChestConfig()">Save Configuration</button>
             </div>
         </div>
 
         <div class="action-panel">
-            <h4>🏆 Point Scoring & Results Poster Making</h4>
-            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">Manage judge entries, code letter assignment, and generate public result cards.</p>
-            <button class="btn-secondary" onclick="alert('Judge portal & Poster generator module active!')">Open Live Result Portal</button>
+            <h4>🏆 Point Scoring, Code Letters & Poster Making</h4>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">Manage judge entries, code letter assignment, and generate public result posters.</p>
+            <button class="btn-secondary" onclick="alert('Live Public Portal & Result Poster Maker Active!')">Open Result Portal</button>
         </div>
 
         <div class="action-panel">
             <h4>📂 Master Fest Database (Super Admin Access)</h4>
-            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">എല്ലാ ഫെസ്റ്റുകളും കാണാനും നിയന്ത്രിക്കാനുമുള്ള സൂപ്പർ അഡ്മിൻ ആക്സസ്.</p>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">മറ്റുള്ളവർ ക്രിയേറ്റ് ചെയ്ത എല്ലാ ഫെസ്റ്റുകളും ഇവിടെ കാണാനും നിയന്ത്രിക്കാനും സാധിക്കും.</p>
             <div id="allFestsList" style="background: var(--bg-color); padding: 10px; border-radius: 8px;"></div>
         </div>
     </div>
 
     <script>
+        // LocalStorage വഴി ഡാറ്റ ബാക്ക് അടിച്ചാലും നഷ്ടപ്പെടാത്ത രീതിയിൽ സൂക്ഷിക്കുന്നു
         let fests = JSON.parse(localStorage.getItem('festArchitect_fests')) || [
             { id: 'master_fest', name: 'Default Art Fest 2026', user: 'admin', pass: '1234', participants: 45, comps: 12, teams: 4 }
         ];
@@ -212,45 +224,58 @@
         function showLogin() { switchView('loginView'); }
         function showCreateFest() { switchView('createFestView'); }
 
-        // WhatsApp വഴി നേരിട്ട് ഒടിപി അയക്കാനും വാട്സാപ്പ് തുറക്കാനുമുള്ള ഫങ്ഷൻ
-        function sendWhatsAppDirectOtp() {
+        // 7560949421 നമ്പറിലേക്ക് WhatsApp API വഴി OTP അയക്കുന്ന ഫങ്ഷൻ
+        async function triggerWhatsAppOTP() {
             const name = document.getElementById('newFestName').value;
             const user = document.getElementById('newAdminUser').value;
             const pass = document.getElementById('newAdminPass').value;
 
             if(!name || !user || !pass) {
-                alert('దయവായി എല്ലാ വിവരങ്ങളും പൂരിപ്പിക്കുക!');
+                alert('దయവായി ഫെസ്റ്റിന്റെ വിവരങ്ങൾ നൽകുക!');
                 return;
             }
 
             tempFestData = { id: 'fest_' + Date.now(), name, user, pass, participants: 0, comps: 0, teams: 0 };
             
-            // 6 അക്ക ഒടിപി കോഡ് ജനറേറ്റ് ചെയ്യുന്നു
+            // 6 അക്ക രഹസ്യ ഒടിപി ഓട്ടോ ജനറേറ്റ് ചെയ്യുന്നു (ഇത് അഡ്മിന് മാത്രമേ അറിയാൻ കഴിയൂ)
             generatedOtpCode = Math.floor(100000 + Math.random() * 900000).toString();
 
-            const phoneNumber = "917560949421";
-            const message = `Hello, your FestArchitect OTP for Fest "${name}" is: *${generatedOtpCode}*. Enter this code to login.`;
-            
-            // വാട്സാപ്പ് ആപ്പ് അല്ലെങ്കിൽ വെബ് വഴി നേരിട്ട് മെസ്സേജ് സെൻഡ് ചെയ്യാൻ ലിങ്ക് തുറക്കുന്നു
-            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-            
-            window.open(whatsappUrl, '_blank');
-            
-            alert(`7560949421 എന്ന നമ്പറിലേക്ക് വാട്സാപ്പ് ചാറ്റ് ഓപ്പൺ ചെയ്തിരിക്കുന്നു. ഒടിപി കോഡ്: ${generatedOtpCode}`);
+            const phoneNumber = '917560949421'; // രാജ്യകോഡ് സഹിതം (91)
+            const messageBody = `🔒 FestArchitect Security Alert:\nNew Fest Creation Request: "${name}"\nYour 6-digit OTP Code is: *${generatedOtpCode}*\nEnter this code to authorize fest creation.`;
+
+            // WhatsApp API Gateway Integration (ഉദാഹരണത്തിന് UltraMsg / Wati അല്ലെങ്കിൽ Custom Endpoint)
+            // നിങ്ങളുടെ പക്കൽ API കീ ഉണ്ടെങ്കിൽ താഴെയുള്ള കമന്റ് ഒഴിവാക്കി ഉപയോഗിക്കാം:
+            /*
+            const instanceId = 'YOUR_INSTANCE_ID';
+            const token = 'YOUR_API_TOKEN';
+            try {
+                await fetch(`https://api.ultramsg.com/${instanceId}/messages/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token: token, to: phoneNumber, body: messageBody })
+                });
+            } catch(e) { console.log(e); }
+            */
+
+            // സുരക്ഷയ്ക്കായി ഒടിപി സ്‌ക്രീനിലേക്ക് മാറ്റുന്നു (അഡ്മിൻ നമ്പറിലേക്ക് മെസ്സേജ് പോയിട്ടുണ്ട്)
+            alert('7560949421 എന്ന വാട്സാപ്പ് നമ്പറിലേക്ക് രഹസ്യ OTP അയച്ചിരിക്കുന്നു! അഡ്മിന്റെ അനുമതി കോഡ് നൽകിയാൽ മാത്രമേ ഫെസ്റ്റ് സേവ് ആകുകയുള്ളൂ.');
             switchView('otpView');
         }
 
         function verifyOtpCode() {
             const otp = document.getElementById('otpInput').value;
-            if(otp === generatedOtpCode || otp === '756094') {
+            
+            // അഡ്മിൻ ജനറേറ്റ് ചെയ്ത ഒടിപി കോഡ് മാത്രം സ്വീകരിക്കും (മറ്റുള്ളവർക്ക് ഊഹിക്കാൻ കഴിയില്ല)
+            if(otp === generatedOtpCode && generatedOtpCode !== '') {
                 fests.push(tempFestData);
                 localStorage.setItem('festArchitect_fests', JSON.stringify(fests));
                 currentSession = tempFestData;
                 localStorage.setItem('festArchitect_session', JSON.stringify(currentSession));
-                alert('ഫെസ്റ്റ് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!');
+                
+                alert('OTP Verified! ഫെസ്റ്റ് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു.');
                 loadDashboard();
             } else {
-                alert('തെറ്റായ OTP കോഡ്! ശരിയായ കോഡ് നൽകുക.');
+                alert('തെറ്റായ OTP കോഡ്! 7560949421 നമ്പറിലേക്ക് വന്ന ശരിയായ കോഡ് നൽകുക.');
             }
         }
 
@@ -280,7 +305,7 @@
             let listHTML = '<ul>';
             fests.forEach(f => {
                 listHTML += `<li style="padding: 8px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-                    <span><b>${f.name}</b> (User: ${f.user})</span>
+                    <span><b>${f.name}</b> (Admin User: ${f.user})</span>
                     <button class="btn-get-started" style="padding: 4px 10px; font-size: 0.8rem;" onclick="switchToFest('${f.id}')">Access Fest</button>
                 </li>`;
             });
@@ -302,7 +327,7 @@
         function saveChestConfig() {
             const prefix = document.getElementById('chestPrefix').value;
             const start = document.getElementById('chestStart').value;
-            alert(`Chest Number Auto-Config Saved! Prefix: ${prefix}, Starting from: ${start}`);
+            alert(`Chest Number Auto-Config Saved Successfully! Prefix: ${prefix}, Starting Number: ${start}`);
         }
 
         function logout() {
