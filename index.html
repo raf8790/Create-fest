@@ -3,431 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProFest Manager - Ultimate Fest Automation</title>
+    <title>FestArchitect - Manage Your Fest Without the Chaos</title>
+    <!-- Google Fonts & Tailwind CSS for Professional Look -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #4f46e5;
-            --primary-dark: #4338ca;
-            --secondary: #06b6d4;
-            --bg-color: #f3f4f6;
-            --card-bg: #ffffff;
-            --text-main: #1f2937;
-            --text-muted: #6b7280;
-            --danger: #ef4444;
-            --success: #10b981;
+        body { font-family: 'Inter', sans-serif; }
+        .hero-gradient {
+            background: linear-gradient(135deg, #f8fafc 0%, #ede9fe 100%);
         }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
 
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-violet-600 flex items-center justify-center text-white shadow-lg shadow-violet-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0Vനിങ്ങൾ നൽകിയ ഇമേജിലെ **FestArchitect** വെബ്‌സൈറ്റിന്റെ മോഡൽ പോലെ, പ്രൊഫഷണൽ ലുക്കോട് കൂടിയ ഒരു ആധുനിക ഹോം പേജ് (Home Page) താഴെ നൽകുന്നു. HTML ഉം CSS ഉം ഉപയോഗിച്ചാണ് ഇത് തയ്യാറാക്കിയിരിക്കുന്നത്. 
+
+നിങ്ങൾ ആവശ്യപ്പെട്ട ഫീച്ചറുകൾ (മൾട്ടിപ്പിൾ ഫെസ്റ്റ് ലോഗിൻ, അഡ്മിൻ ആക്‌സസ്, ചെസ്റ്റ് നമ്പർ മാനേജ്‌മെന്റ്, ജഡ്ജ് പോയിന്റ് എൻട്രി, പബ്ലിക് പോർട്ടൽ തുടങ്ങിയവ) ഫുൾ-സ്റ്റാക്ക് ഡെവലപ്‌മെന്റിൽ (Node.js/PHP + Database) ചെയ്യാവുന്നതാണ്. നിലവിൽ ഈ വെബ്‌സൈറ്റിന്റെ ഫ്രണ്ട് എൻഡ് (Front-end) ഡിസൈൻ താഴെ നൽകുന്നു:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FestArchitect - Manage Your Fest Without the Chaos</title>
+    <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.6;
+            background-color: #f8fafc;
+            color: #1e293b;
+            overflow-x: hidden;
         }
 
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 1.5rem 2rem;
+        /* Navbar */
+        nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            padding: 20px 5%;
+            background: #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        header h1 {
-            font-size: 1.8rem;
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 1rem;
-        }
-
-        .card {
-            background: var(--card-bg);
+        .logo-icon {
+            background: #6366f1;
+            color: white;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             border-radius: 10px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            margin-bottom: 2rem;
+            font-size: 20px;
         }
 
-        h2, h3 {
-            margin-bottom: 1rem;
-            color: var(--primary-dark);
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
         }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-
-        button {
-            background-color: var(--primary);
+        .get-started-btn {
+            background-color: #0f172a;
             color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
+            padding: 10px 22px;
+            border-radius: 25px;
             font-weight: 600;
-            transition: background 0.2s;
+            cursor: pointer;
+            transition: background 0.3s ease;
         }
 
-        button:hover {
-            background-color: var(--primary-dark);
+        .get-started-btn:hover {
+            background-color: #334155;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        th {
-            background-color: #f9fafb;
-            color: var(--text-muted);
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .badge {
-            padding: 0.25rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: white;
-            background: var(--primary);
-        }
-
-        /* Result Poster Styling */
-        #poster-preview {
-            background: linear-gradient(135deg, #1e1b4b, #312e81);
-            color: white;
-            padding: 3rem;
+        /* Hero Section */
+        .hero {
             text-align: center;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            margin-top: 2rem;
+            padding: 80px 20px 50px 20px;
+            max-width: 800px;
+            margin: 0 auto;
         }
-        #poster-preview h2 { color: #f59e0b; font-size: 2.5rem; }
-        #poster-preview .winner-box {
-            background: rgba(255,255,255,0.1);
-            margin: 1rem auto;
-            padding: 1rem;
-            border-radius: 8px;
-            max-width: 500px;
+
+        .trusted-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #ffffff;
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid #e2e8f0;
+            font-size: 14px;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .trusted-badge span {
+            color: #10b981;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.15;
+            color: #0f172a;
+            margin-bottom: 25px;
+        }
+
+        .hero h1 span {
+            color: #8b5cf6;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        /* Action Buttons */
+        .hero-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
+            color: white;
+            border: none;
+            padding: 16px 35px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 35px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+            transition: transform 0.2s ease;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #1e293b;
+            border: 1px solid #e2e8f0;
+            padding: 14px 35px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            border-radius: 35px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            max-width: 320px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .btn-secondary:hover {
+            background: #f1f5f9;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>🏆 ProFest Management System</h1>
-        <div id="auth-nav">
-            <button onclick="showSection('login-section')">Admin Login</button>
-            <button onclick="showSection('public-portal')">Public Portal</button>
+    <!-- Navbar -->
+    <nav>
+        <div class="logo-container">
+            <div class="logo-icon">✨</div>
+            <div class="logo-text">FestArchitect</div>
         </div>
-    </header>
+        <button class="get-started-btn">Get Started</button>
+    </nav>
 
-    <div class="container">
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="trusted-badge">
+            <span>✔</span> Trusted by 500+ Institutions
+        </div>
+        
+        <h1>Manage Your Fest <span>Without the Chaos.</span></h1>
+        
+        <p>The all-in-one platform for schools and colleges to manage participants, schedule programs, digitize judging, and publish live results seamlessly.</p>
+        
+        <div class="hero-actions">
+            <button class="btn-primary">Start Your Fest &rarr;</button>
+            <button class="btn-secondary">
+                <span>▶</span> Tutorial Video
+            </button>
+        </div>
+    </section>
 
-        <!-- PUBLIC PORTAL SECTION -->
-        <section id="public-portal" class="card">
-            <h2>🌟 Public Result & Live Portal</h2>
-            <p>Welcome! Check out live results and schedules here without login.</p>
-            <div style="margin-top: 1.5rem;">
-                <h3>Live Result Standings</h3>
-                <div id="public-results-display">No results published yet.</div>
-            </div>
-        </section>
-
-        <!-- LOGIN SECTION -->
-        <section id="login-section" class="card hidden">
-            <h2>🔐 Admin & Judge Login</h2>
-            <div class="form-grid" style="max-width: 400px;">
-                <input type="text" id="username" placeholder="Username (e.g. admin)">
-                <input type="password" id="password" placeholder="Password (e.g. 1234)">
-                <button onclick="handleLogin()">Login to Fest Dashboard</button>
-            </div>
-        </section>
-
-        <!-- ADMIN DASHBOARD -->
-        <section id="admin-dashboard" class="hidden">
-            <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
-                <h2>⚙️ Fest Control Center</h2>
-                <button style="background: var(--danger);" onclick="handleLogout()">Logout</button>
-            </div>
-
-            <!-- 1. Chest Number & General Settings -->
-            <div class="card">
-                <h3>1. Chest Number & Prefix Configuration</h3>
-                <div class="form-grid">
-                    <input type="text" id="fest-name" placeholder="Fest Name (e.g. Sargotsavam 2026)">
-                    <select id="chest-type">
-                        <option value="auto">Auto Increment (1, 2, 3...)</option>
-                        <option value="manual">Manual Entry</option>
-                    </select>
-                    <input type="number" id="chest-start" placeholder="Starting Number (e.g. 101)" value="101">
-                    <button onclick="saveSettings()">Save Settings</button>
-                </div>
-            </div>
-
-            <!-- 2. Team & Code Letters Setup -->
-            <div class="card">
-                <h3>2. Team & Code Letter Setting</h3>
-                <div class="form-grid">
-                    <input type="text" id="team-name" placeholder="Team Name (e.g. Red Dragons)">
-                    <input type="text" id="team-code" placeholder="Code Letter (e.g. RD)">
-                    <button onclick="addTeam()">Add Team</button>
-                </div>
-                <table id="teams-table">
-                    <tr><th>Team Name</th><th>Code Letter</th><th>Action</th></tr>
-                </table>
-            </div>
-
-            <!-- 3. Participant Registration -->
-            <div class="card">
-                <h3>3. Participant Registration</h3>
-                <div class="form-grid">
-                    <input type="text" id="p-name" placeholder="Participant Name">
-                    <select id="p-team"></select>
-                    <input type="text" id="p-item" placeholder="Event/Competition Name">
-                    <input type="text" id="p-chest" placeholder="Chest Number (Leave blank if auto)">
-                    <button onclick="registerParticipant()">Register Participant</button>
-                </div>
-                <table id="participants-table">
-                    <tr><th>Chest No</th><th>Name</th><th>Team</th><th>Event</th><th>Action</th></tr>
-                </table>
-            </div>
-
-            <!-- 4. Judge Point Entry -->
-            <div class="card">
-                <h3>4. Judge Point & Score Entry</h3>
-                <div class="form-grid">
-                    <select id="score-participant"></select>
-                    <select id="score-grade">
-                        <option value="A">Grade A (5 Points)</option>
-                        <option value="B">Grade B (3 Points)</option>
-                        <option value="C">Grade C (1 Point)</option>
-                    </select>
-                    <input type="number" id="score-position" placeholder="Position (1 for 1st, 2 for 2nd...)">
-                    <button onclick="addScore()">Add Points</button>
-                </div>
-                <table id="scores-table">
-                    <tr><th>Participant</th><th>Event</th><th>Position</th><th>Grade</th><th>Points</th></tr>
-                </table>
-            </div>
-
-            <!-- 5. Result Poster Making -->
-            <div class="card">
-                <h3>5. Result Poster Generator</h3>
-                <div class="form-grid">
-                    <input type="text" id="poster-event" placeholder="Event Name">
-                    <input type="text" id="poster-winner" placeholder="Winner Name & Chest No">
-                    <button onclick="generatePoster()">Generate & Publish Poster</button>
-                </div>
-
-                <div id="poster-preview" class="hidden">
-                    <h2 id="poster-fest-title">FESTIVAL RESULT</h2>
-                    <p>🏆 Event: <span id="res-event-name"></span></p>
-                    <div class="winner-box">
-                        <h3 id="res-winner-name" style="font-size: 2rem; color: #fff;"></h3>
-                    </div>
-                    <p>Congratulations to the Winner! 🎉</p>
-                </div>
-            </div>
-        </section>
-
-    </div>
-
-    <script>
-        // LocalStorage Initializations ensuring data is saved on refresh
-        let festData = JSON.parse(localStorage.getItem('festData')) || {
-            settings: { name: 'My Fest', type: 'auto', start: 101 },
-            teams: [],
-            participants: [],
-            scores: [],
-            poster: null
-        };
-
-        function saveData() {
-            localStorage.setItem('festData', JSON.stringify(festData));
-            refreshUI();
-        }
-
-        function showSection(sectionId) {
-            document.getElementById('public-portal').classList.add('hidden');
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('admin-dashboard').classList.add('hidden');
-            document.getElementById(sectionId).classList.remove('hidden');
-        }
-
-        function handleLogin() {
-            let u = document.getElementById('username').value;
-            let p = document.getElementById('password').value;
-            if(u === 'admin' && p === '1234') {
-                alert('Login Successful!');
-                document.getElementById('auth-nav').classList.add('hidden');
-                showSection('admin-dashboard');
-                refreshUI();
-            } else {
-                alert('Invalid Username or Password! (Use admin / 1234)');
-            }
-        }
-
-        function handleLogout() {
-            document.getElementById('auth-nav').classList.remove('hidden');
-            showSection('public-portal');
-        }
-
-        function saveSettings() {
-            festData.settings.name = document.getElementById('fest-name').value;
-            festData.settings.type = document.getElementById('chest-type').value;
-            festData.settings.start = parseInt(document.getElementById('chest-start').value);
-            saveData();
-            alert('Settings Saved Successfully!');
-        }
-
-        function addTeam() {
-            let name = document.getElementById('team-name').value;
-            let code = document.getElementById('team-code').value;
-            if(!name || !code) return alert('Fill all fields');
-            festData.teams.push({ name, code });
-            document.getElementById('team-name').value = '';
-            document.getElementById('team-code').value = '';
-            saveData();
-        }
-
-        function registerParticipant() {
-            let name = document.getElementById('p-name').value;
-            let team = document.getElementById('p-team').value;
-            let item = document.getElementById('p-item').value;
-            let customChest = document.getElementById('p-chest').value;
-
-            if(!name || !item) return alert('Fill required fields');
-
-            let chestNo;
-            if(festData.settings.type === 'manual' && customChest) {
-                chestNo = customChest;
-            } else {
-                let currentCount = festData.participants.length;
-                chestNo = festData.settings.start + currentCount;
-            }
-
-            festData.participants.push({ chestNo, name, team, item });
-            document.getElementById('p-name').value = '';
-            document.getElementById('p-chest').value = '';
-            document.getElementById('p-item').value = '';
-            saveData();
-        }
-
-        function addScore() {
-            let chestNo = document.getElementById('score-participant').value;
-            let grade = document.getElementById('score-grade').value;
-            let position = document.getElementById('score-position').value;
-
-            let participant = festData.participants.find(p => p.chestNo == chestNo);
-            if(!participant) return alert('Select participant');
-
-            let points = grade === 'A' ? 5 : (grade === 'B' ? 3 : 1);
-            if(position == 1) points += 5; // Extra bonus for 1st place
-
-            festData.scores.push({
-                name: participant.name,
-                item: participant.item,
-                position,
-                grade,
-                points
-            });
-            saveData();
-        }
-
-        function generatePoster() {
-            let event = document.getElementById('poster-event').value;
-            let winner = document.getElementById('poster-winner').value;
-            if(!event || !winner) return alert('Enter event and winner');
-
-            festData.poster = { event, winner, fest: festData.settings.name };
-            saveData();
-            renderPoster();
-            alert('Poster Generated & Published to Public Portal!');
-        }
-
-        function renderPoster() {
-            if(festData.poster) {
-                document.getElementById('poster-preview').classList.remove('hidden');
-                document.getElementById('poster-fest-title').innerText = festData.poster.fest;
-                document.getElementById('res-event-name').innerText = festData.poster.event;
-                document.getElementById('res-winner-name').innerText = festData.poster.winner;
-
-                // Also update public portal
-                document.getElementById('public-results-display').innerHTML = `
-                    <div style="background:var(--primary); color:white; padding:1.5rem; border-radius:8px; text-align:center;">
-                        <h3>🏆 ${festData.poster.event} Winner</h3>
-                        <h1 style="font-size:2rem; margin:0.5rem 0;">${festData.poster.winner}</h1>
-                    </div>
-                `;
-            }
-        }
-
-        function refreshUI() {
-            // Populate Team Dropdown
-            let teamSelect = document.getElementById('p-team');
-            teamSelect.innerHTML = '';
-            let teamsTable = document.getElementById('teams-table');
-            teamsTable.innerHTML = '<tr><th>Team Name</th><th>Code Letter</th></tr>';
-            festData.teams.forEach(t => {
-                teamSelect.innerHTML += `<option value="${t.name}">${t.name} (${t.code})</option>`;
-                teamsTable.innerHTML += `<tr><td>${t.name}</td><td><span class="badge">${t.code}</span></td></tr>`;
-            });
-
-            // Populate Participants Table & Score Dropdown
-            let pTable = document.getElementById('participants-table');
-            pTable.innerHTML = '<tr><th>Chest No</th><th>Name</th><th>Team</th><th>Event</th></tr>';
-            let scoreSelect = document.getElementById('score-participant');
-            scoreSelect.innerHTML = '';
-
-            festData.participants.forEach(p => {
-                pTable.innerHTML += `<tr><td><b>${p.chestNo}</b></td><td>${p.name}</td><td>${p.team}</td><td>${p.item}</td></tr>`;
-                scoreSelect.innerHTML += `<option value="${p.chestNo}">${p.chestNo} - ${p.name} (${p.item})</option>`;
-            });
-
-            // Scores Table
-            let sTable = document.getElementById('scores-table');
-            sTable.innerHTML = '<tr><th>Participant</th><th>Event</th><th>Position</th><th>Grade</th><th>Points</th></tr>';
-            festData.scores.forEach(s => {
-                sTable.innerHTML += `<tr><td>${s.name}</td><td>${s.item}</td><td>${s.position}</td><td>${s.grade}</td><td><b>${s.points}</b></td></tr>`;
-            });
-
-            renderPoster();
-        }
-
-        // Load initial state on page load
-        window.onload = refreshUI;
-    </script>
 </body>
-</html>
+                    </html>
