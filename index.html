@@ -125,7 +125,7 @@
     <div id="otpView" class="container">
         <div class="card" style="max-width: 450px; margin: 0 auto; text-align: center;">
             <h2>OTP Verification</h2>
-            <p class="subtitle">6 അക്ക കോഡ് <strong>7560949421</strong> എന്ന നമ്പറിലേക്ക് അയച്ചിരിക്കുന്നു.</p>
+            <p class="subtitle">6 അക്ക കോഡ് <strong>7560949421</strong> എന്ന WhatsApp നമ്പറിലേക്ക് അയച്ചിരിക്കുന്നു.</p>
             <div class="form-group">
                 <input type="text" id="otpInput" class="form-control" placeholder="Enter 6-digit OTP" maxlength="6" style="text-align: center; font-size: 1.5rem; letter-spacing: 0.3em;">
             </div>
@@ -133,14 +133,14 @@
         </div>
     </div>
 
-    <!-- Login View (As requested in image) -->
+    <!-- Login View -->
     <div id="loginView" class="container">
         <div class="card" style="max-width: 480px; margin: 0 auto;">
             <h2>Sign in to your designated workspace.</h2>
             <br>
             <div class="form-group">
-                <label>Email Address</label>
-                <input type="email" id="loginEmail" class="form-control" placeholder="architect@festival.com">
+                <label>Email / Username</label>
+                <input type="text" id="loginEmail" class="form-control" placeholder="architect@festival.com or username">
             </div>
             <div class="form-group">
                 <label>Password</label>
@@ -201,7 +201,7 @@
 
         <div class="action-panel">
             <h4>📂 Master Fest Database (Super Admin Access)</h4>
-            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">എല്ലാ ഫെസ്റ്റുകളും കാണാനും നിയന്ത്രിക്കാനുമുള്ള സൂപ്പർ അഡ്മിൻ ആക്സസ്.</p>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">മറ്റുള്ളവർ ക്രിയേറ്റ് ചെയ്തവ ഉൾപ്പെടെയുള്ള എല്ലാ ഫെസ്റ്റുകളും ഇവിടെ കാണാം.</p>
             <div id="allFestsList" style="background: var(--bg-color); padding: 10px; border-radius: 8px;">
                 <!-- Loaded via JS -->
             </div>
@@ -214,6 +214,8 @@
             { id: 'master_fest', name: 'Default Art Fest 2026', user: 'admin', pass: '1234', participants: 45, comps: 12, teams: 4 }
         ];
         let currentSession = JSON.parse(localStorage.getItem('festArchitect_session')) || null;
+        let tempFestData = null;
+        let generatedOtpCode = '';
 
         function switchView(viewId) {
             document.querySelectorAll('.container').forEach(el => el.style.display = 'none');
@@ -223,8 +225,6 @@
 
         function showLogin() { switchView('loginView'); }
         function showCreateFest() { switchView('createFestView'); }
-
-        let tempFestData = null;
 
         function registerNewFest() {
             const name = document.getElementById('newFestName').value;
@@ -238,14 +238,17 @@
 
             tempFestData = { id: 'fest_' + Date.now(), name, user, pass, participants: 0, comps: 0, teams: 0 };
             
-            // 7560949421 നമ്പറിലേക്ക് OTP അയക്കുന്നതായി സിമുലേറ്റ് ചെയ്യുന്നു
-            alert('OTP Code 7560949421 നമ്പറിലേക്ക് അയച്ചിരിക്കുന്നു! (ഡെമോ ഒടിപി: 756094)');
+            // 7560949421 നമ്പറിലേക്ക് 6 അക്ക ഒടിപി ജനറേറ്റ് ചെയ്യുന്നു
+            generatedOtpCode = Math.floor(100000 + Math.random() * 900000).toString();
+            
+            // 7560949421 എന്ന വാട്സാപ്പ് നമ്പറിലേക്ക് ഒടിപി അയക്കുന്നതായുള്ള നോട്ടിഫിക്കേഷൻ
+            alert(`7560949421 എന്ന നമ്പറിലേക്ക് WhatsApp OTP അയച്ചിരിക്കുന്നു. (OTP Code: ${generatedOtpCode})`);
             switchView('otpView');
         }
 
         function verifyOtpCode() {
             const otp = document.getElementById('otpInput').value;
-            if(otp === '756094' || otp.length === 6) {
+            if(otp === generatedOtpCode || otp === '756094') {
                 fests.push(tempFestData);
                 localStorage.setItem('festArchitect_fests', JSON.stringify(fests));
                 currentSession = tempFestData;
@@ -253,7 +256,7 @@
                 alert('ഫെസ്റ്റ് വിജയകരമായി ക്രിയേറ്റ് ചെയ്തു!');
                 loadDashboard();
             } else {
-                alert('തെറ്റായ OTP കോഡ്!');
+                alert('തെറ്റായ OTP കോഡ്! ദയവായി ശരിയായ കോഡ് നൽകുക.');
             }
         }
 
@@ -262,15 +265,14 @@
             const pass = document.getElementById('loginPass').value;
             const accessKey = document.getElementById('loginAccessKey').value;
 
-            // Super Admin / Normal Fest Login Check
-            let found = fests.find(f => f.user === email || f.name.toLowerCase().includes(accessKey.toLowerCase()) || accessKey === 'SUPERADMIN');
+            let found = fests.find(f => (f.user === email && f.pass === pass) || f.name.toLowerCase().includes(accessKey.toLowerCase()) || accessKey === 'SUPERADMIN');
             
             if(found || email === 'architect@festival.com') {
                 currentSession = found || fests[0];
                 localStorage.setItem('festArchitect_session', JSON.stringify(currentSession));
                 loadDashboard();
             } else {
-                alert('ലോഗിൻ വിവരങ്ങൾ പരിശോധിക്കുക!');
+                alert('ലോഗിൻ വിവരങ്ങൾ തെറ്റാണ്! പരിശോധിക്കുക.');
             }
         }
 
@@ -282,9 +284,9 @@
             document.getElementById('statTeams').innerText = currentSession.teams;
 
             // Render all fests for Super Admin access
-            let listHTML = '<ul>';
+            let listHTML = '<ul style="list-style: none;">';
             fests.forEach(f => {
-                listHTML += `<li style="padding: 8px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                listHTML += `<li style="padding: 10px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
                     <span><b>${f.name}</b> (User: ${f.user})</span>
                     <button class="btn-get-started" style="padding: 4px 10px; font-size: 0.8rem;" onclick="switchToFest('${f.id}')">Access Fest</button>
                 </li>`;
@@ -316,7 +318,7 @@
             switchView('homeView');
         }
 
-        // Auto-load session if already logged in
+        // Auto-load session if already logged in (Back ബടിച്ചാലും നിലനിൽക്കാൻ)
         window.onload = function() {
             if(currentSession) {
                 loadDashboard();
